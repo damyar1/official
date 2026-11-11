@@ -48,58 +48,13 @@
             gap: 10px;
             flex-wrap: wrap
         }
-
-        .admin-tabs {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 22px 0 18px;
-            padding: 8px;
-            background: #f1f7f1;
-            border: 1px solid #dcebdc;
-            border-radius: 12px
-        }
-
-        .admin-tabs .admin-tab {
-            background: transparent;
-            color: #286b31;
-            border: 1px solid transparent;
-            padding: 11px 20px;
-            border-radius: 8px;
-            font-weight: 700;
-            flex: 1;
-            min-width: 130px;
-            transition: .2s
-        }
-
-        .admin-tabs .admin-tab:hover {
-            background: #e2f0e3
-        }
-
-        .admin-tabs .admin-tab.active {
-            background: #2e7d32;
-            color: #fff;
-            box-shadow: 0 2px 7px #0002
-        }
-
-        .admin-tab-panel {
-            padding: 4px 0
-        }
-
-        .admin-tab-panel[hidden] {
-            display: none !important
-        }
-
-        @media(max-width:520px) {
-            .admin-tabs {
-                gap: 6px
-            }
-
-            .admin-tabs .admin-tab {
-                min-width: 100%;
-                text-align: center
-            }
-        }
+        .admin-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 18px;padding:8px;background:#f1f7f1;border:1px solid #dcebdc;border-radius:12px}
+        .admin-tabs .admin-tab{background:transparent;color:#286b31;border:1px solid transparent;padding:11px 20px;border-radius:8px;font-weight:700;flex:1;min-width:130px;transition:.2s}
+        .admin-tabs .admin-tab:hover{background:#e2f0e3}
+        .admin-tabs .admin-tab.active{background:#2e7d32;color:#fff;box-shadow:0 2px 7px #0002}
+        .admin-tab-panel{padding:4px 0}
+        .admin-tab-panel[hidden]{display:none!important}
+        @media(max-width:520px){.admin-tabs{gap:6px}.admin-tabs .admin-tab{min-width:100%;text-align:center}}
     </style>
     <meta name="description"
         content="دامیار مهر و لامرد؛ اخبار، مقالات، اطلاعات و مطالب مرتبط با دامداری، دام و طیور و خوراک دام در شهرستان‌های مهر و لامرد.">
@@ -119,12 +74,11 @@
         <ul>
             <li><a href="index.html">خانه</a></li>
             <li><a href="news.html">اخبار</a></li>
-            <li><a href="livestock.html">دام</a></li>
-            <li><a href="poultry.html">طیور</a></li>
-            <li><a href="feed.html">خوراک دام و طیور</a></li>
+            <li><a href="livestock.html">دامداری</a></li>
+            <li><a href="poultry.html">دام و طیور</a></li>
+            <li><a href="feed.html">خوراک دام</a></li>
             <li><a href="articles.html">مقالات</a></li>
-            <li><a href="library.html">کتابخانه علوم دامی</a></li>
-            <li><a href="contact.html">دربارهٔ ما</a></li>
+            <li><a href="library.html">کتابخانه علوم دامی</a></li><li><a href="contact.html">دربارهٔ ما</a></li>
         </ul>
     </nav>
     <main class="adminwrap">
@@ -140,170 +94,148 @@
                 <h2 style="margin:0">پنل مدیریت دامیار</h2><button id="logout">خروج</button>
             </div>
             <nav class="admin-tabs" role="tablist" aria-label="بخش‌های پنل مدیریت">
-                <button type="button" class="admin-tab active" data-admin-tab="admin-posts-section" role="tab"
-                    aria-selected="true">مدیریت مطالب</button>
-                <button type="button" class="admin-tab" data-admin-tab="admin-comments-section" role="tab"
-                    aria-selected="false">مدیریت دیدگاه‌ها</button>
-                <button type="button" class="admin-tab" data-admin-tab="admin-archive-section" role="tab"
-                    aria-selected="false">آرشیو خبرها</button>
-                <button type="button" class="admin-tab" data-admin-tab="admin-library-section" role="tab"
-                    aria-selected="false">کتابخانه علوم دامی</button>
-                <button type="button" class="admin-tab" data-admin-tab="admin-media-section" role="tab"
-                    aria-selected="false">تصاویر و تبلیغات</button>
-                <button type="button" class="admin-tab" data-admin-tab="admin-about-section" role="tab"
-                    aria-selected="false">دربارهٔ ما</button>
+                <button type="button" class="admin-tab active" data-admin-tab="admin-posts-section" role="tab" aria-selected="true">مدیریت مطالب</button>
+                <button type="button" class="admin-tab" data-admin-tab="admin-comments-section" role="tab" aria-selected="false">مدیریت دیدگاه‌ها</button>
+                <button type="button" class="admin-tab" data-admin-tab="admin-archive-section" role="tab" aria-selected="false">آرشیو خبرها</button>
+                <button type="button" class="admin-tab" data-admin-tab="admin-library-section" role="tab" aria-selected="false">کتابخانه علوم دامی</button>
+                <button type="button" class="admin-tab" data-admin-tab="admin-media-section" role="tab" aria-selected="false">تصاویر و تبلیغات</button>
+                <button type="button" class="admin-tab" data-admin-tab="admin-about-section" role="tab" aria-selected="false">دربارهٔ ما</button>
             </nav>
             <section class="admin-tab-panel active" id="admin-posts-section" role="tabpanel">
-                <h2>مدیریت مطالب</h2>
-                <form id="postForm"><input type="hidden" id="postId"><label>عنوان</label><input id="title"
-                        required><label>نوع مطلب</label><select id="kind">
-                        <option value="article">مقاله</option>
-                        <option value="news">خبر</option>
-                    </select>
-                    <div id="categoryWrap"><label>دسته‌بندی مقاله</label><select id="category">
-                            <option value="livestock">دام</option>
-                            <option value="poultry">طیور</option>
-                            <option value="feed">خوراک دام و طیور</option>
-                            <option value="articles">مقالات</option>
-                        </select></div><label>تصویر مطلب (اختیاری)</label><input type="file" id="postImage"
-                        accept="image/*"><small>در صورت انتخاب، تصویر در فضای ذخیره‌سازی Supabase آپلود
-                        می‌شود.</small><label>وضعیت خبر</label><select id="archived">
-                        <option value="false">فعال / جدید</option>
-                        <option value="true">آرشیو خبر</option>
-                    </select><label>متن</label><textarea id="content" rows="10" required></textarea><label>وضعیت
-                        انتشار</label><select id="published">
-                        <option value="true">منتشر شود</option>
-                        <option value="false">پیش‌نویس</option>
-                    </select><button>ذخیره مطلب</button><button type="button" id="cancelEdit"
-                        style="background:#777">لغو
-                        ویرایش</button>
-                </form>
-                <p id="saveMsg"></p>
-                <h3>مطالب موجود</h3>
-                <div class="admin-search" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
-                    <input id="adminSearch" type="search" placeholder="جستجو بین عنوان و متن خبرها و مقالات..."
-                        style="flex:1;min-width:220px;padding:10px;border:1px solid #ddd;border-radius:5px">
-                    <select id="adminKindFilter" style="padding:10px;border:1px solid #ddd;border-radius:5px">
-                        <option value="all">همه مطالب</option>
-                        <option value="news">فقط خبرها</option>
-                        <option value="article">فقط مقالات</option>
-                    </select>
-                </div>
-                <div id="adminPosts"></div>
+            <h2>مدیریت مطالب</h2>
+            <form id="postForm"><input type="hidden" id="postId"><label>عنوان</label><input id="title"
+                    required><label>نوع مطلب</label><select id="kind">
+                    <option value="article">مقاله</option>
+                    <option value="news">خبر</option>
+                </select>
+                <div id="categoryWrap"><label>دسته‌بندی مقاله</label><select id="category">
+                        <option value="livestock">دامداری</option>
+                        <option value="poultry">دام و طیور</option>
+                        <option value="feed">خوراک دام</option>
+                        <option value="articles">مقالات</option>
+                    </select></div><label>تصویر مطلب (اختیاری)</label><input type="file" id="postImage"
+                    accept="image/*"><small>در صورت انتخاب، تصویر در فضای ذخیره‌سازی Supabase آپلود
+                    می‌شود.</small><label>وضعیت خبر</label><select id="archived">
+                    <option value="false">فعال / جدید</option>
+                    <option value="true">آرشیو خبر</option>
+                </select><label>متن</label><textarea id="content" rows="10" required></textarea><label>وضعیت
+                    انتشار</label><select id="published">
+                    <option value="true">منتشر شود</option>
+                    <option value="false">پیش‌نویس</option>
+                </select><button>ذخیره مطلب</button><button type="button" id="cancelEdit" style="background:#777">لغو
+                    ویرایش</button>
+            </form>
+            <p id="saveMsg"></p>
+            <h3>مطالب موجود</h3>
+            <div class="admin-search" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
+                <input id="adminSearch" type="search" placeholder="جستجو بین عنوان و متن خبرها و مقالات..."
+                    style="flex:1;min-width:220px;padding:10px;border:1px solid #ddd;border-radius:5px">
+                <select id="adminKindFilter" style="padding:10px;border:1px solid #ddd;border-radius:5px">
+                    <option value="all">همه مطالب</option>
+                    <option value="news">فقط خبرها</option>
+                    <option value="article">فقط مقالات</option>
+                </select>
+            </div>
+            <div id="adminPosts"></div>
             </section>
             <section class="admin-tab-panel" id="admin-archive-section" role="tabpanel" hidden>
                 <h2>آرشیو خبرها</h2>
-                <p>خبرهایی که حداقل ۲۴ ساعت از انتشارشان گذشته، به‌صورت خودکار به این بخش منتقل می‌شوند. از اینجا
-                    می‌توانید آن‌ها را دوباره به فهرست خبرهای فعال برگردانید.</p>
-                <div id="adminArchivedPosts">
-                    <p>در حال دریافت آرشیو...</p>
-                </div>
+                <p>خبرهایی که حداقل ۲۴ ساعت از انتشارشان گذشته، به‌صورت خودکار به این بخش منتقل می‌شوند. از اینجا می‌توانید آن‌ها را دوباره به فهرست خبرهای فعال برگردانید.</p>
+                <div id="adminArchivedPosts"><p>در حال دریافت آرشیو...</p></div>
             </section>
             <section class="admin-tab-panel" id="admin-media-section" role="tabpanel" hidden>
-                <h2>مدیریت تصاویر تبلیغات و گالری</h2>
-                <form id="mediaForm">
-                    <label>نوع تصویر</label><select id="mediaType">
-                        <option value="ad">تبلیغات</option>
-                        <option value="gallery">گالری تصاویر</option>
-                    </select>
-                    <label>عنوان یا توضیح</label><input id="mediaTitle" placeholder="مثلاً تبلیغ خوراک دام">
-                    <label>موضوع تبلیغ</label><select id="mediaTopic">
-                        <option value="users">تبلیغات کاربران</option>
-                        <option value="companies">تبلیغات شرکت‌ها</option>
-                        <option value="shared_resources">منابع مشترک</option>
-                        <option value="livestock">دامداری</option>
-                        <option value="poultry">دام و طیور</option>
-                        <option value="feed">خوراک دام و طیور</option>
-                        <option value="equipment">تجهیزات و ماشین‌آلات</option>
-                        <option value="services">خدمات</option>
-                        <option value="products">محصولات و تأمین‌کنندگان</option>
-                        <option value="chicks">جوجه و طیور</option>
-                        <option value="other">سایر</option>
-                    </select>
-                    <div class="media-placement-field">
-                        <label for="mediaPage">صفحه نمایش تبلیغ</label>
-                        <select id="mediaPage">
-                            <option value="all">تمام صفحات سایت</option>
-                            <option value="home">فقط صفحه خانه</option>
-                            <option value="news">صفحه اخبار</option>
-                            <option value="articles">صفحه مقالات</option>
-                            <option value="livestock">صفحه دامداری</option>
-                            <option value="poultry">صفحه دام و طیور</option>
-                            <option value="feed">صفحه خوراک دام</option>
-                        </select>
-                    </div>
-                    <div class="media-placement-field">
-                        <label for="mediaPlacement">جایگاه دقیق تبلیغ</label>
-                        <select id="mediaPlacement">
-                            <option value="right_sidebar">ستون سمت راست (بخش‌ها)</option>
-                            <option value="left_sidebar">ستون سمت چپ (گالری و دسته‌بندی)</option>
-                            <option value="content_inline">داخل مطالب، ستون وسط</option>
-                            <option value="bottom_banner">بنر عریض زیر ستون‌ها</option>
-                        </select>
-                        <small>اول صفحه و بعد جایگاه دقیق را انتخاب کن. نیازی به ساخت ستون یا جایگاه جدید نیست.</small>
-                    </div>
-                    <label>لینک مقصد (برای تبلیغات اختیاری)</label><input id="mediaLink" type="url"
-                        placeholder="https://...">
-                    <label>انتخاب تصویر</label><input id="mediaFile" type="file" accept="image/*" required>
-                    <button type="submit">آپلود تصویر</button>
-                </form>
-                <p id="mediaMsg"></p>
-                <h3>تصاویر ذخیره‌شده</h3>
-                <div id="adminMedia"></div>
+            <h2>مدیریت تصاویر تبلیغات و گالری</h2>
+            <form id="mediaForm">
+                <label>نوع تصویر</label><select id="mediaType">
+                    <option value="ad">تبلیغات</option>
+                    <option value="gallery">گالری تصاویر</option>
+                </select>
+                <label>عنوان یا توضیح</label><input id="mediaTitle" placeholder="مثلاً تبلیغ خوراک دام">
+                <label>موضوع تبلیغ</label><select id="mediaTopic">
+                    <option value="users">تبلیغات کاربران</option>
+                    <option value="companies">تبلیغات شرکت‌ها</option>
+                    <option value="shared_resources">منابع مشترک</option>
+                    <option value="livestock">دامداری</option>
+                    <option value="poultry">دام و طیور</option>
+                    <option value="feed">خوراک دام و طیور</option>
+                    <option value="equipment">تجهیزات و ماشین‌آلات</option>
+                    <option value="services">خدمات</option>
+                    <option value="products">محصولات و تأمین‌کنندگان</option>
+                    <option value="chicks">جوجه و طیور</option>
+                    <option value="other">سایر</option>
+                </select>
+                <div class="media-placement-field">
+                <label for="mediaPage">صفحه نمایش تبلیغ</label>
+                <select id="mediaPage">
+                    <option value="all">تمام صفحات سایت</option>
+                    <option value="home">فقط صفحه خانه</option>
+                    <option value="news">صفحه اخبار</option>
+                    <option value="articles">صفحه مقالات</option>
+                    <option value="livestock">صفحه دامداری</option>
+                    <option value="poultry">صفحه دام و طیور</option>
+                    <option value="feed">صفحه خوراک دام</option>
+                </select>
+                </div>
+                <div class="media-placement-field">
+                <label for="mediaPlacement">جایگاه دقیق تبلیغ</label>
+                <select id="mediaPlacement">
+                    <option value="right_sidebar">ستون سمت راست (بخش‌ها)</option>
+                    <option value="left_sidebar">ستون سمت چپ (گالری و دسته‌بندی)</option>
+                    <option value="content_inline">داخل مطالب، ستون وسط</option>
+                    <option value="bottom_banner">بنر عریض زیر ستون‌ها</option>
+                </select>
+                <small>اول صفحه و بعد جایگاه دقیق را انتخاب کن. نیازی به ساخت ستون یا جایگاه جدید نیست.</small>
+                </div>
+                <label>لینک مقصد (برای تبلیغات اختیاری)</label><input id="mediaLink" type="url"
+                    placeholder="https://...">
+                <label>انتخاب تصویر</label><input id="mediaFile" type="file" accept="image/*" required>
+                <button type="submit">آپلود تصویر</button>
+            </form>
+            <p id="mediaMsg"></p>
+            <h3>تصاویر ذخیره‌شده</h3>
+            <div id="adminMedia"></div>
             </section>
             <section class="admin-tab-panel" id="admin-comments-section" role="tabpanel" hidden>
-                <section id="commentsAdmin" class="admin-subsection">
-                    <h2>مدیریت کامنت‌ها</h2>
-                    <p>کامنت‌ها پس از ثبت در انتظار تأیید می‌مانند و فقط پس از تأیید در سایت نمایش داده می‌شوند.</p>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button type="button"
-                            onclick="loadAdminComments('pending')">در انتظار تأیید</button><button type="button"
-                            onclick="loadAdminComments('approved')">منتشرشده‌ها</button><button type="button"
-                            onclick="loadAdminComments('all')">همه</button></div>
-                    <div id="adminComments" style="margin-top:12px">برای مشاهده کامنت‌ها یکی از فیلترها را انتخاب کنید.
-                    </div>
-                </section>
+            <section id="commentsAdmin" class="admin-subsection">
+                <h2>مدیریت کامنت‌ها</h2>
+                <p>کامنت‌ها پس از ثبت در انتظار تأیید می‌مانند و فقط پس از تأیید در سایت نمایش داده می‌شوند.</p>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button type="button" onclick="loadAdminComments('pending')">در انتظار تأیید</button><button type="button" onclick="loadAdminComments('approved')">منتشرشده‌ها</button><button type="button" onclick="loadAdminComments('all')">همه</button></div>
+                <div id="adminComments" style="margin-top:12px">برای مشاهده کامنت‌ها یکی از فیلترها را انتخاب کنید.</div>
+            </section>
             </section>
             <section class="admin-tab-panel" id="admin-library-section" role="tabpanel" hidden>
-                <section id="libraryAdmin" class="admin-subsection">
-                    <h2>کتابخانه علوم دامی</h2>
-                    <p>فایل‌های Excel در این بخش آپلود و برای دانلود کاربران در صفحه کتابخانه منتشر می‌شوند.</p>
-                    <form id="libraryForm">
-                        <label for="libraryTitle">عنوان فایل</label><input id="libraryTitle" required maxlength="120"
-                            placeholder="مثلاً جدول جیره غذایی دام">
-                        <label for="libraryDescription">توضیحات</label><textarea id="libraryDescription" rows="3"
-                            maxlength="600" placeholder="توضیح کوتاه درباره فایل"></textarea>
-                        <label for="libraryFile">انتخاب فایل Excel (حداکثر ۲۰ مگابایت)</label><input id="libraryFile"
-                            type="file"
-                            accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-                            required>
-                        <button type="submit">آپلود و انتشار فایل</button><button type="button"
-                            id="cancelLibraryReplace" style="background:#777;display:none">لغو جایگزینی</button>
-                    </form>
-                    <p id="libraryMsg" role="status"></p>
-                    <h3>فایل‌های منتشرشده</h3>
-                    <div id="adminLibraryFiles"></div>
-                </section>
+            <section id="libraryAdmin" class="admin-subsection">
+                <h2>کتابخانه علوم دامی</h2>
+                <p>فایل‌های Excel در این بخش آپلود و برای دانلود کاربران در صفحه کتابخانه منتشر می‌شوند.</p>
+                <form id="libraryForm">
+                    <label for="libraryTitle">عنوان فایل</label><input id="libraryTitle" required maxlength="120" placeholder="مثلاً جدول جیره غذایی دام">
+                    <label for="libraryDescription">توضیحات</label><textarea id="libraryDescription" rows="3" maxlength="600" placeholder="توضیح کوتاه درباره فایل"></textarea>
+                    <label for="libraryFile">انتخاب فایل Excel (حداکثر ۲۰ مگابایت)</label><input id="libraryFile" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" required>
+                    <button type="submit">آپلود و انتشار فایل</button><button type="button" id="cancelLibraryReplace" style="background:#777;display:none">لغو جایگزینی</button>
+                </form>
+                <p id="libraryMsg" role="status"></p>
+                <h3>فایل‌های منتشرشده</h3><div id="adminLibraryFiles"></div>
+            </section>
             </section>
             <section class="admin-tab-panel" id="admin-about-section" role="tabpanel" hidden>
-                <h2>تنظیمات صفحه دربارهٔ ما</h2>
-                <p>متن معرفی دامیار و راه ارتباط با پشتیبانی از این قسمت در صفحه «دربارهٔ ما» نمایش داده می‌شود.</p>
-                <form id="aboutSettingsForm">
-                    <label for="aboutAdminTitle">عنوان صفحه</label>
-                    <input id="aboutAdminTitle" maxlength="120" value="دربارهٔ دامیار">
-                    <label for="aboutAdminContent">متن معرفی دامیار</label>
-                    <textarea id="aboutAdminContent" rows="7" placeholder="درباره دامیار بنویسید..."></textarea>
-                    <label for="supportAdminTitle">عنوان بخش پشتیبانی</label>
-                    <input id="supportAdminTitle" maxlength="120" value="ارتباط با پشتیبانی">
-                    <label for="supportAdminDescription">توضیح بخش پشتیبانی</label>
-                    <textarea id="supportAdminDescription" rows="3"
-                        placeholder="متن کوتاه راهنمای ارتباط با پشتیبانی"></textarea>
-                    <label for="supportAdminLabel">متن دکمه پشتیبانی</label>
-                    <input id="supportAdminLabel" maxlength="80" value="ارتباط با پشتیبانی">
-                    <label for="supportAdminUrl">لینک پشتیبانی</label>
-                    <input id="supportAdminUrl" type="url" placeholder="https://eitaa.com/..." required>
-                    <button type="submit">ذخیره تنظیمات دربارهٔ ما</button>
-                </form>
-                <p id="aboutSettingsMsg" role="status"></p>
+            <h2>تنظیمات صفحه دربارهٔ ما</h2>
+            <p>متن معرفی دامیار و راه ارتباط با پشتیبانی از این قسمت در صفحه «دربارهٔ ما» نمایش داده می‌شود.</p>
+            <form id="aboutSettingsForm">
+                <label for="aboutAdminTitle">عنوان صفحه</label>
+                <input id="aboutAdminTitle" maxlength="120" value="دربارهٔ دامیار">
+                <label for="aboutAdminContent">متن معرفی دامیار</label>
+                <textarea id="aboutAdminContent" rows="7" placeholder="درباره دامیار بنویسید..."></textarea>
+                <label for="supportAdminTitle">عنوان بخش پشتیبانی</label>
+                <input id="supportAdminTitle" maxlength="120" value="ارتباط با پشتیبانی">
+                <label for="supportAdminDescription">توضیح بخش پشتیبانی</label>
+                <textarea id="supportAdminDescription" rows="3" placeholder="متن کوتاه راهنمای ارتباط با پشتیبانی"></textarea>
+                <label for="supportAdminLabel">متن دکمه پشتیبانی</label>
+                <input id="supportAdminLabel" maxlength="80" value="ارتباط با پشتیبانی">
+                <label for="supportAdminUrl">لینک پشتیبانی</label>
+                <input id="supportAdminUrl" type="url" placeholder="https://eitaa.com/..." required>
+                <button type="submit">ذخیره تنظیمات دربارهٔ ما</button>
+            </form>
+            <p id="aboutSettingsMsg" role="status"></p>
             </section>
         </section>
     </main>
@@ -312,12 +244,12 @@
     <script src="site.js"></script>
     <script>
         let currentUser = null; const $ = id => document.getElementById(id);
-        document.querySelectorAll('[data-admin-tab]').forEach(btn => btn.addEventListener('click', () => { const target = btn.getAttribute('data-admin-tab'); document.querySelectorAll('[data-admin-tab]').forEach(b => { const active = b === btn; b.classList.toggle('active', active); b.setAttribute('aria-selected', active ? 'true' : 'false'); }); document.querySelectorAll('.admin-tab-panel').forEach(panel => { const active = panel.id === target; panel.hidden = !active; panel.classList.toggle('active', active); }); if (target === 'admin-library-section') loadLibraryFiles(); if (target === 'admin-comments-section') loadAdminComments('pending'); if (target === 'admin-archive-section') renderArchivedPosts(); }));
+        document.querySelectorAll('[data-admin-tab]').forEach(btn=>btn.addEventListener('click',()=>{const target=btn.getAttribute('data-admin-tab');document.querySelectorAll('[data-admin-tab]').forEach(b=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-selected',active?'true':'false');});document.querySelectorAll('.admin-tab-panel').forEach(panel=>{const active=panel.id===target;panel.hidden=!active;panel.classList.toggle('active',active);});if(target==='admin-library-section')loadLibraryFiles();if(target==='admin-comments-section')loadAdminComments('pending');if(target==='admin-archive-section')renderArchivedPosts();}));
         async function sessionCheck() { const { data } = await supabaseClient.auth.getSession(); currentUser = data.session?.user || null; showPanel(); }
         function showPanel() { $('login').style.display = currentUser ? 'none' : 'block'; $('dashboard').style.display = currentUser ? 'block' : 'none'; if (currentUser) { loadAdminPosts(); loadMedia(); loadAdminComments('pending'); loadLibraryFiles(); loadAboutSettings(); } };
         function resetForm() { $('postForm').reset(); $('postId').value = ''; syncCategory(); }
         function syncCategory() { const isNews = $('kind').value === 'news'; $('categoryWrap').style.display = isNews ? 'none' : 'block'; if (isNews) $('category').value = 'news'; else if ($('category').value === 'news') $('category').value = 'articles'; }
-        $('kind').addEventListener('change', () => { syncCategory(); $('archived').closest('label')?.style.setProperty('display', $('kind').value === 'news' ? 'block' : 'none'); $('archived').style.display = $('kind').value === 'news' ? 'block' : 'none'; }); syncCategory(); $('archived').style.display = $('kind').value === 'news' ? 'block' : 'none';
+        $('kind').addEventListener('change', ()=>{syncCategory();$('archived').closest('label')?.style.setProperty('display',$('kind').value==='news'?'block':'none');$('archived').style.display=$('kind').value==='news'?'block':'none';}); syncCategory();$('archived').style.display=$('kind').value==='news'?'block':'none';
         async function uploadImage(file, folder) {
             const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
             const path = folder + '/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
@@ -326,14 +258,14 @@
             return supabaseClient.storage.from('damyar-media').getPublicUrl(path).data.publicUrl;
         }
         async function loadAdminPosts() { const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false }); if (error) { $('adminPosts').textContent = 'خطا: ' + error.message; return; } window.adminData = data || []; renderAdminPosts(); }
-        function renderAdminPosts() { const term = ($('adminSearch')?.value || '').trim().toLocaleLowerCase('fa'); const kind = $('adminKindFilter')?.value || 'all'; const list = (window.adminData || []).filter(p => !(String(p.kind || '').toLowerCase() === 'news' && p.archived === true)).filter(p => { const text = (String(p.title || '') + ' ' + String(p.content || '')).toLocaleLowerCase('fa'); return (kind === 'all' || String(p.kind || 'article').toLowerCase() === kind) && (!term || text.includes(term)); }); $('adminPosts').innerHTML = list.map(p => `<div class=\"rowpost\"><div><b>${safe(p.title)}</b><small> — ${String(p.kind || 'article').toLowerCase() === 'news' ? 'خبر' : 'مقاله'} — ${p.published ? 'منتشرشده' : 'پیش‌نویس'} — ${p.category || 'بدون دسته'}</small></div><div><button onclick=\"editItem('${p.id}')\">ویرایش</button> <button style=\"background:#c33\" onclick=\"removeItem('${p.id}')\">حذف</button></div></div>`).join('') || '<div class=\"empty\">مطلبی با این جستجو/فیلتر پیدا نشد.</div>'; renderArchivedPosts(); }
-        function renderArchivedPosts() { const box = $('adminArchivedPosts'); if (!box) return; const list = (window.adminData || []).filter(p => String(p.kind || '').toLowerCase() === 'news' && p.archived === true); box.innerHTML = list.map(p => `<div class=\"rowpost\"><div><b>${safe(p.title)}</b><small> — ${p.published ? 'منتشرشده' : 'پیش‌نویس'} — ${p.created_at ? new Date(p.created_at).toLocaleDateString('fa-IR') : ''}</small></div><div><button onclick=\"restoreArchivedNews('${p.id}')\">بازگردانی به خبرهای فعال</button><button style=\"background:#c33\" onclick=\"removeItem('${p.id}')\">حذف</button></div></div>`).join('') || '<p class=\"empty\">هنوز خبری در آرشیو نیست.</p>'; }
-        window.restoreArchivedNews = async id => { const { error } = await supabaseClient.from('posts').update({ archived: false }).eq('id', id); if (error) alert('خطا در بازگردانی: ' + error.message); else loadAdminPosts(); };
+        function renderAdminPosts() { const term = ($('adminSearch')?.value || '').trim().toLocaleLowerCase('fa'); const kind = $('adminKindFilter')?.value || 'all'; const list = (window.adminData || []).filter(p => !(String(p.kind||'').toLowerCase()==='news' && p.archived===true)).filter(p => { const text = (String(p.title || '') + ' ' + String(p.content || '')).toLocaleLowerCase('fa'); return (kind === 'all' || String(p.kind || 'article').toLowerCase() === kind) && (!term || text.includes(term)); }); $('adminPosts').innerHTML = list.map(p => `<div class=\"rowpost\"><div><b>${safe(p.title)}</b><small> — ${String(p.kind || 'article').toLowerCase() === 'news' ? 'خبر' : 'مقاله'} — ${p.published ? 'منتشرشده' : 'پیش‌نویس'} — ${p.category || 'بدون دسته'}</small></div><div><button onclick=\"editItem('${p.id}')\">ویرایش</button> <button style=\"background:#c33\" onclick=\"removeItem('${p.id}')\">حذف</button></div></div>`).join('') || '<div class=\"empty\">مطلبی با این جستجو/فیلتر پیدا نشد.</div>'; renderArchivedPosts(); }
+        function renderArchivedPosts(){const box=$('adminArchivedPosts');if(!box)return;const list=(window.adminData||[]).filter(p=>String(p.kind||'').toLowerCase()==='news'&&p.archived===true);box.innerHTML=list.map(p=>`<div class=\"rowpost\"><div><b>${safe(p.title)}</b><small> — ${p.published?'منتشرشده':'پیش‌نویس'} — ${p.created_at?new Date(p.created_at).toLocaleDateString('fa-IR'):''}</small></div><div><button onclick=\"restoreArchivedNews('${p.id}')\">بازگردانی به خبرهای فعال</button><button style=\"background:#c33\" onclick=\"removeItem('${p.id}')\">حذف</button></div></div>`).join('')||'<p class=\"empty\">هنوز خبری در آرشیو نیست.</p>';}
+        window.restoreArchivedNews=async id=>{const {error}=await supabaseClient.from('posts').update({archived:false}).eq('id',id);if(error)alert('خطا در بازگردانی: '+error.message);else loadAdminPosts();};
         $('adminSearch').addEventListener('input', renderAdminPosts); $('adminKindFilter').addEventListener('change', renderAdminPosts);
         function safe(v) { return String(v || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
         window.editItem = id => { const p = window.adminData.find(x => String(x.id) === String(id)); if (!p) return; $('postId').value = p.id; $('title').value = p.title; $('content').value = p.content; $('kind').value = p.kind; $('category').value = p.category || 'articles'; syncCategory(); $('archived').value = String(!!p.archived); $('published').value = String(p.published); window.scrollTo({ top: 0, behavior: 'smooth' }); };
         window.removeItem = async id => { if (!confirm('مطلب حذف شود؟')) return; const { error } = await supabaseClient.from('posts').delete().eq('id', id); if (error) alert(error.message); else loadAdminPosts(); };
-        $('postForm').onsubmit = async e => { e.preventDefault(); const id = $('postId').value; const kind = $('kind').value; const current = (window.adminData || []).find(p => String(p.id) === String(id)); let imageUrl = current?.image_url || null; const image = $('postImage').files[0]; if (image) { imageUrl = await uploadImage(image, 'posts'); if (!imageUrl) return; } const payload = { title: $('title').value.trim(), content: $('content').value.trim(), kind, category: kind === 'news' ? 'news' : $('category').value, archived: kind === 'news' && $('archived').value === 'true', published: $('published').value === 'true', image_url: imageUrl }; const result = id ? await supabaseClient.from('posts').update(payload).eq('id', id) : await supabaseClient.from('posts').insert(payload); if (result.error) { $('saveMsg').textContent = 'خطا در ذخیره مطلب: ' + result.error.message; return; } $('saveMsg').textContent = 'مطلب با موفقیت ذخیره شد.'; resetForm(); loadAdminPosts(); };
+        $('postForm').onsubmit=async e=>{e.preventDefault();const id=$('postId').value;const kind=$('kind').value;const current=(window.adminData||[]).find(p=>String(p.id)===String(id));let imageUrl=current?.image_url||null;const image=$('postImage').files[0];if(image){imageUrl=await uploadImage(image,'posts');if(!imageUrl)return;}const payload={title:$('title').value.trim(),content:$('content').value.trim(),kind,category:kind==='news'?'news':$('category').value,archived:kind==='news'&&$('archived').value==='true',published:$('published').value==='true',image_url:imageUrl};const result=id?await supabaseClient.from('posts').update(payload).eq('id',id):await supabaseClient.from('posts').insert(payload);if(result.error){$('saveMsg').textContent='خطا در ذخیره مطلب: '+result.error.message;return;}$('saveMsg').textContent='مطلب با موفقیت ذخیره شد.';resetForm();loadAdminPosts();};
         function formatPlacement(value) {
             const raw = String(value || 'all');
             const parts = raw.split('|');
@@ -358,27 +290,25 @@
         };
         window.deleteMedia = async id => { if (!confirm('این تصویر حذف شود؟')) return; const { error } = await supabaseClient.from('site_media').delete().eq('id', id); if (error) alert(error.message); else loadMedia(); };
         let libraryReplaceId = null;
-        async function loadAdminComments(filter = 'pending') {
-            const box = $('adminComments'); box.textContent = 'در حال دریافت...';
-            let q = supabaseClient.from('post_comments').select('id,post_id,name,content,approved,created_at').order('created_at', { ascending: false });
-            if (filter === 'pending') q = q.eq('approved', false); if (filter === 'approved') q = q.eq('approved', true);
-            const { data, error } = await q; if (error) { box.textContent = 'خطا: ' + error.message; return; }
-            const posts = window.adminData || [];
-            box.innerHTML = (data || []).map(c => { const post = posts.find(p => String(p.id) === String(c.post_id)); return `<article class="rowpost"><div style="flex:1;min-width:220px"><b>${safe(c.name)}</b><small> — ${safe(post?.title || 'مطلب حذف‌شده')} — ${new Date(c.created_at).toLocaleString('fa-IR')} — ${c.approved ? 'منتشرشده' : 'در انتظار تأیید'}</small><p style="white-space:pre-wrap;margin:8px 0">${safe(c.content)}</p></div><div>${!c.approved ? `<button onclick="moderateComment(${c.id},true)">تأیید و انتشار</button>` : ''}<button style="background:#c33" onclick="deleteComment(${c.id})">حذف</button></div></article>` }).join('') || '<p class="empty">کامنتی در این بخش وجود ندارد.</p>';
+        async function loadAdminComments(filter='pending') {
+            const box=$('adminComments');box.textContent='در حال دریافت...';
+            let q=supabaseClient.from('post_comments').select('id,post_id,name,content,approved,created_at').order('created_at',{ascending:false});
+            if(filter==='pending')q=q.eq('approved',false);if(filter==='approved')q=q.eq('approved',true);
+            const {data,error}=await q;if(error){box.textContent='خطا: '+error.message;return;}
+            const posts=window.adminData||[];
+            box.innerHTML=(data||[]).map(c=>{const post=posts.find(p=>String(p.id)===String(c.post_id));return `<article class="rowpost"><div style="flex:1;min-width:220px"><b>${safe(c.name)}</b><small> — ${safe(post?.title||'مطلب حذف‌شده')} — ${new Date(c.created_at).toLocaleString('fa-IR')} — ${c.approved?'منتشرشده':'در انتظار تأیید'}</small><p style="white-space:pre-wrap;margin:8px 0">${safe(c.content)}</p></div><div>${!c.approved?`<button onclick="moderateComment(${c.id},true)">تأیید و انتشار</button>`:''}<button style="background:#c33" onclick="deleteComment(${c.id})">حذف</button></div></article>`}).join('')||'<p class="empty">کامنتی در این بخش وجود ندارد.</p>';
         }
-        window.moderateComment = async (id, approved) => { const { error } = await supabaseClient.from('post_comments').update({ approved }).eq('id', id); if (error) alert('خطا: ' + error.message); else loadAdminComments('pending'); };
-        window.deleteComment = async (id) => { if (!confirm('این کامنت حذف شود؟')) return; const { error } = await supabaseClient.from('post_comments').delete().eq('id', id); if (error) alert(error.message); else loadAdminComments('all'); };
-        async function loadLibraryFiles() { const box = $('adminLibraryFiles'); const { data, error } = await supabaseClient.from('library_files').select('*').order('created_at', { ascending: false }); if (error) { box.textContent = 'خطا: ' + error.message; return; } window.libraryFiles = data || []; box.innerHTML = window.libraryFiles.map(f => `<div class="rowpost"><div style="flex:1"><b>${safe(f.title)}</b><small> — ${safe(f.file_name)} — ${new Date(f.created_at).toLocaleDateString('fa-IR')}</small><p>${safe(f.description || '')}</p><a href="${safe(f.public_url)}" target="_blank" rel="noopener">مشاهده فایل</a></div><div><button onclick="startLibraryReplace('${f.id}')">جایگزینی</button><button style="background:#c33" onclick="deleteLibraryFile('${f.id}')">حذف</button></div></div>`).join('') || '<p class="empty">هنوز فایلی منتشر نشده است.</p>'; }
-        window.startLibraryReplace = (id) => { const f = (window.libraryFiles || []).find(x => x.id === id); if (!f) return; libraryReplaceId = id; $('libraryTitle').value = f.title; $('libraryDescription').value = f.description || ''; $('libraryFile').required = true; $('libraryMsg').textContent = 'فایل جدید را انتخاب کنید تا جایگزین فایل قبلی شود.'; $('cancelLibraryReplace').style.display = 'inline-block'; $('libraryForm').scrollIntoView({ behavior: 'smooth' }); };
-        $('cancelLibraryReplace').onclick = () => { libraryReplaceId = null; $('libraryForm').reset(); $('cancelLibraryReplace').style.display = 'none'; $('libraryMsg').textContent = 'جایگزینی لغو شد.'; };
-        $('libraryForm').onsubmit = async e => {
-            e.preventDefault(); const file = $('libraryFile').files[0]; if (!file) return; const ext = (file.name.split('.').pop() || '').toLowerCase(); if (!['xlsx', 'xls'].includes(ext)) { $('libraryMsg').textContent = 'فقط فایل‌های XLS و XLSX مجاز هستند.'; return; } if (file.size > 20 * 1024 * 1024) { $('libraryMsg').textContent = 'حجم فایل نباید بیشتر از ۲۰ مگابایت باشد.'; return; }
-            $('libraryMsg').textContent = 'در حال آپلود فایل...'; const path = Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext; const { error: upErr } = await supabaseClient.storage.from('damyar-library').upload(path, file, { upsert: false, contentType: file.type || 'application/octet-stream' }); if (upErr) { $('libraryMsg').textContent = 'خطای آپلود: ' + upErr.message + '؛ اجرای SQL و ساخت Storage را بررسی کنید.'; return; } const publicUrl = supabaseClient.storage.from('damyar-library').getPublicUrl(path).data.publicUrl; const payload = { title: $('libraryTitle').value.trim(), description: $('libraryDescription').value.trim(), file_name: file.name, file_path: path, public_url: publicUrl }; let result;
-            if (libraryReplaceId) { const old = (window.libraryFiles || []).find(x => x.id === libraryReplaceId); result = await supabaseClient.from('library_files').update(payload).eq('id', libraryReplaceId); if (!result.error && old?.file_path) await supabaseClient.storage.from('damyar-library').remove([old.file_path]); }
-            else result = await supabaseClient.from('library_files').insert(payload);
-            if (result.error) { await supabaseClient.storage.from('damyar-library').remove([path]); $('libraryMsg').textContent = 'خطا در ذخیره اطلاعات فایل: ' + result.error.message; return; } $('libraryMsg').textContent = 'فایل با موفقیت منتشر شد.'; $('libraryForm').reset(); libraryReplaceId = null; $('cancelLibraryReplace').style.display = 'none'; loadLibraryFiles();
-        };
-        window.deleteLibraryFile = async (id) => { if (!confirm('فایل از کتابخانه حذف شود؟')) return; const f = (window.libraryFiles || []).find(x => x.id === id); const { error } = await supabaseClient.from('library_files').delete().eq('id', id); if (error) { alert(error.message); return; } if (f?.file_path) await supabaseClient.storage.from('damyar-library').remove([f.file_path]); loadLibraryFiles(); };
+        window.moderateComment=async(id,approved)=>{const {error}=await supabaseClient.from('post_comments').update({approved}).eq('id',id);if(error)alert('خطا: '+error.message);else loadAdminComments('pending');};
+        window.deleteComment=async(id)=>{if(!confirm('این کامنت حذف شود؟'))return;const {error}=await supabaseClient.from('post_comments').delete().eq('id',id);if(error)alert(error.message);else loadAdminComments('all');};
+        async function loadLibraryFiles(){const box=$('adminLibraryFiles');const {data,error}=await supabaseClient.from('library_files').select('*').order('created_at',{ascending:false});if(error){box.textContent='خطا: '+error.message;return;}window.libraryFiles=data||[];box.innerHTML=window.libraryFiles.map(f=>`<div class="rowpost"><div style="flex:1"><b>${safe(f.title)}</b><small> — ${safe(f.file_name)} — ${new Date(f.created_at).toLocaleDateString('fa-IR')}</small><p>${safe(f.description||'')}</p><a href="${safe(f.public_url)}" target="_blank" rel="noopener">مشاهده فایل</a></div><div><button onclick="startLibraryReplace('${f.id}')">جایگزینی</button><button style="background:#c33" onclick="deleteLibraryFile('${f.id}')">حذف</button></div></div>`).join('')||'<p class="empty">هنوز فایلی منتشر نشده است.</p>';}
+        window.startLibraryReplace=(id)=>{const f=(window.libraryFiles||[]).find(x=>x.id===id);if(!f)return;libraryReplaceId=id;$('libraryTitle').value=f.title;$('libraryDescription').value=f.description||'';$('libraryFile').required=true;$('libraryMsg').textContent='فایل جدید را انتخاب کنید تا جایگزین فایل قبلی شود.';$('cancelLibraryReplace').style.display='inline-block';$('libraryForm').scrollIntoView({behavior:'smooth'});};
+        $('cancelLibraryReplace').onclick=()=>{libraryReplaceId=null;$('libraryForm').reset();$('cancelLibraryReplace').style.display='none';$('libraryMsg').textContent='جایگزینی لغو شد.';};
+        $('libraryForm').onsubmit=async e=>{e.preventDefault();const file=$('libraryFile').files[0];if(!file)return;const ext=(file.name.split('.').pop()||'').toLowerCase();if(!['xlsx','xls'].includes(ext)){ $('libraryMsg').textContent='فقط فایل‌های XLS و XLSX مجاز هستند.';return;}if(file.size>20*1024*1024){$('libraryMsg').textContent='حجم فایل نباید بیشتر از ۲۰ مگابایت باشد.';return;}
+            $('libraryMsg').textContent='در حال آپلود فایل...';const path=Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+ext;const {error:upErr}=await supabaseClient.storage.from('damyar-library').upload(path,file,{upsert:false,contentType:file.type||'application/octet-stream'});if(upErr){$('libraryMsg').textContent='خطای آپلود: '+upErr.message+'؛ اجرای SQL و ساخت Storage را بررسی کنید.';return;}const publicUrl=supabaseClient.storage.from('damyar-library').getPublicUrl(path).data.publicUrl;const payload={title:$('libraryTitle').value.trim(),description:$('libraryDescription').value.trim(),file_name:file.name,file_path:path,public_url:publicUrl};let result;
+            if(libraryReplaceId){const old=(window.libraryFiles||[]).find(x=>x.id===libraryReplaceId);result=await supabaseClient.from('library_files').update(payload).eq('id',libraryReplaceId);if(!result.error&&old?.file_path)await supabaseClient.storage.from('damyar-library').remove([old.file_path]);}
+            else result=await supabaseClient.from('library_files').insert(payload);
+            if(result.error){await supabaseClient.storage.from('damyar-library').remove([path]);$('libraryMsg').textContent='خطا در ذخیره اطلاعات فایل: '+result.error.message;return;}$('libraryMsg').textContent='فایل با موفقیت منتشر شد.';$('libraryForm').reset();libraryReplaceId=null;$('cancelLibraryReplace').style.display='none';loadLibraryFiles();};
+        window.deleteLibraryFile=async(id)=>{if(!confirm('فایل از کتابخانه حذف شود؟'))return;const f=(window.libraryFiles||[]).find(x=>x.id===id);const {error}=await supabaseClient.from('library_files').delete().eq('id',id);if(error){alert(error.message);return;}if(f?.file_path)await supabaseClient.storage.from('damyar-library').remove([f.file_path]);loadLibraryFiles();};
         async function loadAboutSettings() {
             const msg = $('aboutSettingsMsg');
             const { data, error } = await supabaseClient.from('about_settings').select('*').eq('id', 1).maybeSingle();
