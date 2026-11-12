@@ -74,10 +74,11 @@
         <ul>
             <li><a href="index.html">خانه</a></li>
             <li><a href="news.html">اخبار</a></li>
-            <li><a href="livestock.html">دامداری</a></li>
-            <li><a href="poultry.html">دام و طیور</a></li>
-            <li><a href="feed.html">خوراک دام</a></li>
+            <li><a href="livestock.html">دام</a></li>
+            <li><a href="poultry.html">طیور</a></li>
+            <li><a href="feed.html">خوراک دام و طیور</a></li>
             <li><a href="articles.html">مقالات</a></li>
+            <li><a href="analysis.html">تحلیل‌ها</a></li>
             <li><a href="library.html">کتابخانه علوم دامی</a></li><li><a href="contact.html">دربارهٔ ما</a></li>
         </ul>
     </nav>
@@ -106,12 +107,13 @@
             <form id="postForm"><input type="hidden" id="postId"><label>عنوان</label><input id="title"
                     required><label>نوع مطلب</label><select id="kind">
                     <option value="article">مقاله</option>
+                    <option value="analysis">تحلیل</option>
                     <option value="news">خبر</option>
                 </select>
                 <div id="categoryWrap"><label>دسته‌بندی مقاله</label><select id="category">
-                        <option value="livestock">دامداری</option>
-                        <option value="poultry">دام و طیور</option>
-                        <option value="feed">خوراک دام</option>
+                        <option value="livestock">دام</option>
+                        <option value="poultry">طیور</option>
+                        <option value="feed">خوراک دام و طیور</option>
                         <option value="articles">مقالات</option>
                     </select></div><label>تصویر مطلب (اختیاری)</label><input type="file" id="postImage"
                     accept="image/*"><small>در صورت انتخاب، تصویر در فضای ذخیره‌سازی Supabase آپلود
@@ -134,6 +136,7 @@
                     <option value="all">همه مطالب</option>
                     <option value="news">فقط خبرها</option>
                     <option value="article">فقط مقالات</option>
+                    <option value="analysis">فقط تحلیل‌ها</option>
                 </select>
             </div>
             <div id="adminPosts"></div>
@@ -155,8 +158,8 @@
                     <option value="users">تبلیغات کاربران</option>
                     <option value="companies">تبلیغات شرکت‌ها</option>
                     <option value="shared_resources">منابع مشترک</option>
-                    <option value="livestock">دامداری</option>
-                    <option value="poultry">دام و طیور</option>
+                    <option value="livestock">دام</option>
+                    <option value="poultry">طیور</option>
                     <option value="feed">خوراک دام و طیور</option>
                     <option value="equipment">تجهیزات و ماشین‌آلات</option>
                     <option value="services">خدمات</option>
@@ -171,20 +174,21 @@
                     <option value="home">فقط صفحه خانه</option>
                     <option value="news">صفحه اخبار</option>
                     <option value="articles">صفحه مقالات</option>
-                    <option value="livestock">صفحه دامداری</option>
-                    <option value="poultry">صفحه دام و طیور</option>
-                    <option value="feed">صفحه خوراک دام</option>
+                    <option value="livestock">صفحه دام</option>
+                    <option value="poultry">صفحه طیور</option>
+                    <option value="feed">صفحه خوراک دام و طیور</option>
+                    <option value="post">صفحه جزئیات مطلب</option>
                 </select>
                 </div>
                 <div class="media-placement-field">
                 <label for="mediaPlacement">جایگاه دقیق تبلیغ</label>
                 <select id="mediaPlacement">
                     <option value="right_sidebar">ستون سمت راست (بخش‌ها)</option>
-                    <option value="left_sidebar">ستون سمت چپ (گالری و دسته‌بندی)</option>
+                    <option value="left_sidebar">ستون سمت چپ (گالری تصاویر)</option>
                     <option value="content_inline">داخل مطالب، ستون وسط</option>
                     <option value="bottom_banner">بنر عریض زیر ستون‌ها</option>
                 </select>
-                <small>اول صفحه و بعد جایگاه دقیق را انتخاب کن. نیازی به ساخت ستون یا جایگاه جدید نیست.</small>
+                <small>ابتدا صفحه و سپس محل نمایش را انتخاب کن. اگر آن محل در صفحه وجود نداشته باشد، جایگاه تبلیغ به‌صورت خودکار ساخته می‌شود.</small>
                 </div>
                 <label>لینک مقصد (برای تبلیغات اختیاری)</label><input id="mediaLink" type="url"
                     placeholder="https://...">
@@ -258,7 +262,8 @@
             return supabaseClient.storage.from('damyar-media').getPublicUrl(path).data.publicUrl;
         }
         async function loadAdminPosts() { const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false }); if (error) { $('adminPosts').textContent = 'خطا: ' + error.message; return; } window.adminData = data || []; renderAdminPosts(); }
-        function renderAdminPosts() { const term = ($('adminSearch')?.value || '').trim().toLocaleLowerCase('fa'); const kind = $('adminKindFilter')?.value || 'all'; const list = (window.adminData || []).filter(p => !(String(p.kind||'').toLowerCase()==='news' && p.archived===true)).filter(p => { const text = (String(p.title || '') + ' ' + String(p.content || '')).toLocaleLowerCase('fa'); return (kind === 'all' || String(p.kind || 'article').toLowerCase() === kind) && (!term || text.includes(term)); }); $('adminPosts').innerHTML = list.map(p => `<div class=\"rowpost\"><div><b>${safe(p.title)}</b><small> — ${String(p.kind || 'article').toLowerCase() === 'news' ? 'خبر' : 'مقاله'} — ${p.published ? 'منتشرشده' : 'پیش‌نویس'} — ${p.category || 'بدون دسته'}</small></div><div><button onclick=\"editItem('${p.id}')\">ویرایش</button> <button style=\"background:#c33\" onclick=\"removeItem('${p.id}')\">حذف</button></div></div>`).join('') || '<div class=\"empty\">مطلبی با این جستجو/فیلتر پیدا نشد.</div>'; renderArchivedPosts(); }
+        function postKindLabel(kind) { return ({news:'خبر',article:'مقاله',analysis:'تحلیل'})[String(kind||'article').toLowerCase()] || 'مقاله'; }
+        function renderAdminPosts() { const term = ($('adminSearch')?.value || '').trim().toLocaleLowerCase('fa'); const kind = $('adminKindFilter')?.value || 'all'; const list = (window.adminData || []).filter(p => !(String(p.kind||'').toLowerCase()==='news' && p.archived===true)).filter(p => { const text = (String(p.title || '') + ' ' + String(p.content || '')).toLocaleLowerCase('fa'); return (kind === 'all' || String(p.kind || 'article').toLowerCase() === kind) && (!term || text.includes(term)); }); $('adminPosts').innerHTML = list.map(p => `<div class="rowpost"><div><b>${safe(p.title)}</b><small> — ${postKindLabel(p.kind)} — ${p.published ? 'منتشرشده' : 'پیش‌نویس'} — ${({livestock:'دام',poultry:'طیور',feed:'خوراک دام و طیور',articles:'مقالات',news:'اخبار'})[p.category] || p.category || 'بدون دسته'}</small></div><div><button onclick="editItem('${p.id}')">ویرایش</button> <button style="background:#c33" onclick="removeItem('${p.id}')">حذف</button></div></div>`).join('') || '<div class="empty">مطلبی با این جستجو/فیلتر پیدا نشد.</div>'; renderArchivedPosts(); }
         function renderArchivedPosts(){const box=$('adminArchivedPosts');if(!box)return;const list=(window.adminData||[]).filter(p=>String(p.kind||'').toLowerCase()==='news'&&p.archived===true);box.innerHTML=list.map(p=>`<div class=\"rowpost\"><div><b>${safe(p.title)}</b><small> — ${p.published?'منتشرشده':'پیش‌نویس'} — ${p.created_at?new Date(p.created_at).toLocaleDateString('fa-IR'):''}</small></div><div><button onclick=\"restoreArchivedNews('${p.id}')\">بازگردانی به خبرهای فعال</button><button style=\"background:#c33\" onclick=\"removeItem('${p.id}')\">حذف</button></div></div>`).join('')||'<p class=\"empty\">هنوز خبری در آرشیو نیست.</p>';}
         window.restoreArchivedNews=async id=>{const {error}=await supabaseClient.from('posts').update({archived:false}).eq('id',id);if(error)alert('خطا در بازگردانی: '+error.message);else loadAdminPosts();};
         $('adminSearch').addEventListener('input', renderAdminPosts); $('adminKindFilter').addEventListener('change', renderAdminPosts);
@@ -269,10 +274,10 @@
         function formatPlacement(value) {
             const raw = String(value || 'all');
             const parts = raw.split('|');
-            const pageNames = { all: 'تمام صفحات', home: 'خانه', news: 'اخبار', articles: 'مقالات', livestock: 'دامداری', poultry: 'دام و طیور', feed: 'خوراک دام' };
+            const pageNames = { all: 'تمام صفحات', home: 'خانه', news: 'اخبار', articles: 'مقالات', livestock: 'دام', poultry: 'طیور', feed: 'خوراک دام و طیور' };
             const slotNames = { right_sidebar: 'ستون راست', left_sidebar: 'ستون چپ', content_inline: 'وسط مطالب', bottom_banner: 'بنر زیر ستون‌ها' };
             if (parts.length === 2) return (pageNames[parts[0]] || parts[0]) + ' / ' + (slotNames[parts[1]] || parts[1]);
-            const legacy = { all: 'تمام صفحات (جایگاه پیش‌فرض)', home: 'خانه (جایگاه پیش‌فرض)', sidebar: 'ستون راست (قدیمی)', news: 'اخبار (جایگاه پیش‌فرض)', articles: 'مقالات (جایگاه پیش‌فرض)', livestock: 'دامداری (جایگاه پیش‌فرض)', poultry: 'دام و طیور (جایگاه پیش‌فرض)', feed: 'خوراک دام (جایگاه پیش‌فرض)' };
+            const legacy = { all: 'تمام صفحات (جایگاه پیش‌فرض)', home: 'خانه (جایگاه پیش‌فرض)', sidebar: 'ستون راست (قدیمی)', news: 'اخبار (جایگاه پیش‌فرض)', articles: 'مقالات (جایگاه پیش‌فرض)', livestock: 'دام (جایگاه پیش‌فرض)', poultry: 'طیور (جایگاه پیش‌فرض)', feed: 'خوراک دام و طیور (جایگاه پیش‌فرض)' };
             return legacy[raw] || raw;
         }
         async function loadMedia() {
@@ -285,8 +290,16 @@
         $('mediaType').dispatchEvent(new Event('change'));
         $('mediaForm').onsubmit = async e => {
             e.preventDefault(); const file = $('mediaFile').files[0]; if (!file) return; const url = await uploadImage(file, 'media'); if (!url) return;
-            const { error } = await supabaseClient.from('site_media').insert({ type: $('mediaType').value, title: $('mediaTitle').value, topic: $('mediaTopic').value, placement: $('mediaPage').value + '|' + $('mediaPlacement').value, url: url, link_url: $('mediaLink').value || null, image_url: url });
-            $('mediaMsg').textContent = error ? 'خطا: ' + error.message : 'تصویر آپلود شد.'; if (!error) { $('mediaForm').reset(); loadMedia(); }
+            const mediaType = $('mediaType').value;
+            const pageScope = $('mediaPage').value;
+            const slot = mediaType === 'ad' ? $('mediaPlacement').value : null;
+            const placement = mediaType === 'ad' ? `${pageScope}|${slot}` : 'gallery';
+            const { error } = await supabaseClient.from('site_media').insert({ type: mediaType, title: $('mediaTitle').value.trim(), topic: $('mediaTopic').value, placement, url: url, link_url: $('mediaLink').value.trim() || null, image_url: url });
+            if (error) { await supabaseClient.storage.from('damyar-media').remove([url.split('/').slice(-2).join('/')]); $('mediaMsg').textContent = 'ذخیره تبلیغ انجام نشد: ' + error.message; return; }
+            const pageLabel = ({all:'تمام صفحات',home:'خانه',news:'اخبار',articles:'مقالات',livestock:'دام',poultry:'طیور',feed:'خوراک دام و طیور'})[pageScope] || pageScope;
+            const slotLabel = ({right_sidebar:'ستون راست',left_sidebar:'ستون چپ',content_inline:'وسط مطالب',bottom_banner:'بنر زیر ستون‌ها'})[slot] || '';
+            $('mediaMsg').textContent = mediaType === 'ad' ? `تبلیغ برای ${pageLabel} در ${slotLabel} ذخیره شد.` : 'تصویر گالری ذخیره شد.';
+            $('mediaForm').reset(); $('mediaType').dispatchEvent(new Event('change')); loadMedia();
         };
         window.deleteMedia = async id => { if (!confirm('این تصویر حذف شود؟')) return; const { error } = await supabaseClient.from('site_media').delete().eq('id', id); if (error) alert(error.message); else loadMedia(); };
         let libraryReplaceId = null;

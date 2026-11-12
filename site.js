@@ -1,11 +1,13 @@
 async function fetchPosts(){if(!window.supabase||!supabaseClient)return {data:[],error:{message:'Supabase library not available'}};return await supabaseClient.from('posts').select('*').eq('published',true).order('created_at',{ascending:false});}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function card(p,showImage=false){return `<article class="article-preview">${showImage&&p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.title)}" style="max-width:100%;height:auto;border-radius:8px;margin-bottom:12px">`:''}<span class="tag">${p.kind==='news'?'خبر':'مقاله'}</span><h2>${esc(p.title)}</h2><p>${esc((p.content||'').slice(0,240))}${(p.content||'').length>240?'…':''}</p><small>${p.created_at?new Date(p.created_at).toLocaleDateString('fa-IR'):''}</small><br><a class="btn" href="post.html?id=${encodeURIComponent(p.id)}">ادامه مطلب</a></article>`;}
+function postTypeLabel(kind){return ({news:'خبر',article:'مقاله',analysis:'تحلیل'})[String(kind||'article').toLowerCase()]||'مقاله';}
+function card(p,showImage=false){return `<article class="article-preview">${showImage&&p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.title)}" style="max-width:100%;height:auto;border-radius:8px;margin-bottom:12px">`:''}<span class="tag">${postTypeLabel(p.kind)}</span><h2>${esc(p.title)}</h2><p>${esc((p.content||'').slice(0,240))}${(p.content||'').length>240?'…':''}</p><small>${p.created_at?new Date(p.created_at).toLocaleDateString('fa-IR'):''}</small><br><a class="btn" href="post.html?id=${encodeURIComponent(p.id)}">ادامه مطلب</a></article>`;}
 const POSTS_PER_PAGE = 3;
 function getListingPage(){const value=Number.parseInt(new URLSearchParams(location.search).get('page')||'1',10);return Number.isFinite(value)&&value>0?value:1;}
 function renderPagination(total,page){const pages=Math.ceil(total/POSTS_PER_PAGE);if(pages<=1)return '';const makeLink=(n,label,disabled=false,current=false)=>disabled?`<span class="page-link disabled">${label}</span>`:`<a class="page-link${current?' current':''}" href="?page=${n}" ${current?'aria-current="page"':''}>${label}</a>`;let html='<nav class="posts-pagination" aria-label="صفحه‌بندی مطالب">';html+=makeLink(Math.max(1,page-1),'قبلی',page===1);const start=Math.max(1,page-2),end=Math.min(pages,page+2);for(let n=start;n<=end;n++)html+=makeLink(n,String(n),false,n===page);html+=makeLink(Math.min(pages,page+1),'بعدی',page===pages);html+='</nav>';return html;}
-async function renderPosts(target,filter){const el=document.getElementById(target);if(!el)return;const {data,error}=await fetchPosts();if(error){el.innerHTML='<p class="empty">مطالب در حال حاضر قابل دریافت نیستند.</p>';return;}let arr=(data||[]).filter(p=>!(String(p.kind||'').toLowerCase()==='news'&&p.archived===true));if(filter)arr=arr.filter(filter);const page=getListingPage(),pages=Math.max(1,Math.ceil(arr.length/POSTS_PER_PAGE)),safePage=Math.min(page,pages),start=(safePage-1)*POSTS_PER_PAGE;const visible=arr.slice(start,start+POSTS_PER_PAGE);el.innerHTML=(visible.length?visible.map(p=>card(p,target==='latestPosts')).join(''):'<div class="empty">هنوز مطلبی منتشر نشده است.</div>')+renderPagination(arr.length,safePage);const count=document.getElementById('postCount');if(count)count.textContent=arr.length;const last=document.getElementById('lastUpdate');if(last&&data?.[0]?.created_at)last.textContent=new Date(data[0].created_at).toLocaleDateString('fa-IR');}
-async function searchArticles(){const term=(document.getElementById('searchInput')?.value||'').trim();const {data,error}=await fetchPosts();const el=document.getElementById('articlePosts');if(!el)return;if(error){el.textContent='خطا در دریافت مطالب';return;}const arr=(data||[]).filter(p=>(String(p.kind||'article').trim().toLowerCase()==='article')&&(!term||(p.title+' '+p.content).includes(term)));el.innerHTML=arr.length?arr.map(card).join(''):'<div class="empty">مقاله‌ای یافت نشد.</div>';}
+async function renderPosts(target,filter){const el=document.getElementById(target);if(!el)return;const {data,error}=await fetchPosts();if(error){el.innerHTML='<p class="empty">مطالب در حال حاضر قابل دریافت نیستند.</p>';return;}let arr=(data||[]).filter(p=>!(String(p.kind||'').toLowerCase()==='news'&&p.archived===true));if(filter)arr=arr.filter(filter);const isLatest=target==='latestPosts';const page=getListingPage(),pages=Math.max(1,Math.ceil(arr.length/POSTS_PER_PAGE)),safePage=Math.min(page,pages),start=(safePage-1)*POSTS_PER_PAGE;const visible=isLatest?arr.slice(0,1):arr.slice(start,start+POSTS_PER_PAGE);el.innerHTML=(visible.length?visible.map(p=>card(p,isLatest)).join(''):'<div class="empty">هنوز مطلبی منتشر نشده است.</div>')+(isLatest?'':renderPagination(arr.length,safePage));const count=document.getElementById('postCount');if(count)count.textContent=arr.length;const last=document.getElementById('lastUpdate');if(last&&data?.[0]?.created_at)last.textContent=new Date(data[0].created_at).toLocaleDateString('fa-IR');}
+async function searchAnalyses(){const term=(document.getElementById('searchInput')?.value||'').trim();const {data,error}=await fetchPosts();const el=document.getElementById('analysisPosts');if(!el)return;if(error){el.textContent='خطا در دریافت تحلیل‌ها';return;}const arr=(data||[]).filter(p=>String(p.kind||'').trim().toLowerCase()==='analysis'&&(!term||(p.title+' '+p.content).includes(term)));const page=getListingPage(),pages=Math.max(1,Math.ceil(arr.length/POSTS_PER_PAGE)),safePage=Math.min(page,pages),start=(safePage-1)*POSTS_PER_PAGE;const visible=arr.slice(start,start+POSTS_PER_PAGE);el.innerHTML=(visible.length?visible.map(p=>card(p,false)).join(''):'<div class="empty">هنوز تحلیلی منتشر نشده است.</div>')+renderPagination(arr.length,safePage);}
+async function searchArticles(){const term=(document.getElementById('searchInput')?.value||'').trim();const {data,error}=await fetchPosts();const el=document.getElementById('articlePosts');if(!el)return;if(error){el.textContent='خطا در دریافت مطالب';return;}const arr=(data||[]).filter(p=>(['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase()))&&(!term||(p.title+' '+p.content).includes(term)));el.innerHTML=arr.length?arr.map(card).join(''):'<div class="empty">مقاله‌ای یافت نشد.</div>';}
 async function loadVisitStats(){
   if(!supabaseClient)return;
   const {data,error}=await supabaseClient.rpc('get_site_stats');
@@ -23,71 +25,52 @@ if(!sessionStorage.getItem(visitKey)){
   if(!viewError)sessionStorage.setItem(visitKey,'1');
 }
 const {data:viewCount}=await supabaseClient.rpc('get_post_views',{p_post_id:Number(data.id)});
-document.title=data.title+' | دامیار';box.innerHTML=`<span class="tag">${data.kind==='news'?'خبر':'مقاله'}</span><h1 style="color:#2e7d32;margin-bottom:12px">${esc(data.title)}</h1><small>${data.created_at?new Date(data.created_at).toLocaleDateString('fa-IR'):''} | بازدید: ${Number(viewCount||0).toLocaleString('fa-IR')}</small><div style="white-space:pre-wrap;line-height:2.2;margin-top:20px">${esc(data.content)}</div><section class="interaction-panel" id="postInteractions"><h2>واکنش شما</h2><div class="reaction-buttons"><button type="button" id="likeBtn">👍 لایک <b id="likeCount">۰</b></button><button type="button" id="dislikeBtn">👎 دیس‌لایک <b id="dislikeCount">۰</b></button></div><h2>دیدگاه‌ها</h2><form id="commentForm" class="comment-form"><label for="commentName">نام شما</label><input id="commentName" maxlength="60" minlength="2" required placeholder="نام"><label for="commentText">متن دیدگاه</label><textarea id="commentText" maxlength="2000" minlength="2" rows="4" required placeholder="دیدگاه خود را بنویسید..."></textarea><button type="submit">ارسال دیدگاه</button><small id="commentMessage">دیدگاه شما پس از تأیید مدیر منتشر می‌شود.</small></form><div id="commentsList"><p class="empty">در حال دریافت دیدگاه‌ها...</p></div></section>`;await loadPostInteractions(data.id);}
+document.title=data.title+' | دامیار';const featuredImage=data.image_url?`<a class="post-featured-image-link" href="${esc(data.image_url)}" target="_blank" rel="noopener noreferrer" aria-label="نمایش تصویر مطلب در اندازه اصلی"><img class="post-featured-image" src="${esc(data.image_url)}" alt="${esc(data.title)}" loading="eager" decoding="async" onerror="this.closest('.post-featured-image-link').style.display='none'"></a>`:'';box.innerHTML=`<span class="tag">${postTypeLabel(data.kind)}</span><h1 style="color:#2e7d32;margin-bottom:12px">${esc(data.title)}</h1><small>${data.created_at?new Date(data.created_at).toLocaleDateString('fa-IR'):''} | بازدید: ${Number(viewCount||0).toLocaleString('fa-IR')}</small>${featuredImage}<div class="post-content" style="white-space:pre-wrap;line-height:2.2;margin-top:20px">${esc(data.content)}</div><section class="interaction-panel" id="postInteractions"><h2>واکنش شما</h2><div class="reaction-buttons"><button type="button" id="likeBtn" aria-label="لایک">👍 <b id="likeCount">۰</b></button><button type="button" id="dislikeBtn" aria-label="دیس‌لایک">👎 <b id="dislikeCount">۰</b></button></div><h2>دیدگاه‌ها</h2><form id="commentForm" class="comment-form"><label for="commentName">نام شما</label><input id="commentName" maxlength="60" minlength="2" required placeholder="نام"><label for="commentText">متن دیدگاه</label><textarea id="commentText" maxlength="2000" minlength="2" rows="4" required placeholder="دیدگاه خود را بنویسید..."></textarea><button type="submit">ارسال دیدگاه</button><small id="commentMessage">دیدگاه شما پس از تأیید مدیر منتشر می‌شود.</small></form><div id="commentsList"><p class="empty">در حال دریافت دیدگاه‌ها...</p></div></section>`;await loadPostInteractions(data.id);}
 
 async function renderSiteAds(){
   if(!window.supabase||!supabaseClient)return;
   const page=(location.pathname.split('/').pop()||'index.html').replace('.html','');
-  const pageMap={index:'home',news:'news',articles:'articles',livestock:'livestock',poultry:'poultry',feed:'feed'};
+  const pageMap={index:'home',news:'news',articles:'articles',livestock:'livestock',poultry:'poultry',feed:'feed',post:'post'};
   const current=pageMap[page]||'other';
-  const {data,error}=await supabaseClient.from('site_media').select('*').eq('type','ad');
-  if(error||!data)return;
-
-  const slotSelectors={
-    right_sidebar:'.rightside > .ad-slot',
-    left_sidebar:'.leftside > .ad-slot',
-    content_inline:'.content > .ad-slot',
-    bottom_banner:'.layout > .ad-slot.banner'
+  const {data,error}=await supabaseClient.from('site_media').select('id,type,title,image_url,link_url,placement,created_at').eq('type','ad').order('created_at',{ascending:false});
+  if(error){console.error('Damyar ads could not be loaded:',error.message);return;}
+  if(!data?.length)return;
+  const getSlot=(slot)=>{
+    const selectors={
+      right_sidebar:'.rightside > .ad-slot',
+      left_sidebar:'.leftside > .ad-slot',
+      content_inline:'.content > .ad-slot',
+      bottom_banner:'.layout > .ad-slot.banner'
+    };
+    let placeholder=document.querySelector(selectors[slot]||'');
+    if(placeholder)return placeholder;
+    const layout=document.querySelector('.layout');
+    const target=slot==='right_sidebar'?document.querySelector('.rightside'):
+      slot==='left_sidebar'?document.querySelector('.leftside'):
+      slot==='content_inline'?(document.querySelector('.content')||layout):layout;
+    if(!target)return null;
+    placeholder=document.createElement('div');
+    placeholder.className='ad-slot'+(slot==='bottom_banner'?' banner':'');
+    placeholder.dataset.generatedAdSlot=slot;
+    placeholder.innerHTML='<strong>جایگاه تبلیغات</strong>';
+    target.appendChild(placeholder);
+    return placeholder;
   };
-  const legacyPages={home:'home',news:'news',articles:'articles',livestock:'livestock',poultry:'poultry',feed:'feed'};
-
+  const pageAliases={livestock:'livestock',poultry:'poultry',feed:'feed'};
   data.forEach(ad=>{
-    const raw=String(ad.placement||'all').toLowerCase();
-    let pageScope='all';
-    let slot='right_sidebar';
-    if(raw.includes('|')){
-      const parts=raw.split('|');
-      pageScope=parts[0]||'all';
-      slot=parts[1]||'right_sidebar';
-    }else if(raw==='sidebar'){
-      slot='right_sidebar';
-    }else if(raw==='all'){
-      pageScope='all';
-      slot='right_sidebar';
-    }else if(legacyPages[raw]){
-      pageScope=legacyPages[raw];
-      slot='right_sidebar';
-    }
-    if(pageScope!=='all' && pageScope!==current)return;
-    const selector=slotSelectors[slot];
-    if(!selector)return;
-    const placeholder=document.querySelector(selector);
-    if(!placeholder)return;
-
-    const box=document.createElement('div');
-    box.className='damyar-ad-area';
-    const img=document.createElement('img');
-    img.src=ad.image_url||ad.url||'';
-    img.alt=ad.title||'تبلیغات دامیار';
-    img.loading='lazy';
-    if(ad.link_url){
-      const a=document.createElement('a');
-      a.href=ad.link_url;
-      a.target='_blank';
-      a.rel='noopener noreferrer';
-      a.appendChild(img);
-      box.appendChild(a);
-    }else box.appendChild(img);
-    if(ad.title){
-      const caption=document.createElement('small');
-      caption.textContent=ad.title;
-      box.appendChild(caption);
-    }
-    // Keep the ad inside its own designated placeholder, without moving page columns.
-    if(!placeholder.dataset.adRendered){
-      placeholder.innerHTML='';
-      placeholder.dataset.adRendered='true';
-    }
+    const raw=String(ad.placement||'all').toLowerCase().trim();
+    let pageScope='all',slot='right_sidebar';
+    if(raw.includes('|')){const parts=raw.split('|');pageScope=parts[0]||'all';slot=parts[1]||'right_sidebar';}
+    else if(raw==='sidebar'){slot='right_sidebar';}
+    else if(['all','home','news','articles','livestock','poultry','feed','post'].includes(raw)){pageScope=raw==='all'?'all':raw;slot='right_sidebar';}
+    if(pageScope!=='all'&&pageScope!==current)return;
+    if(!['right_sidebar','left_sidebar','content_inline','bottom_banner'].includes(slot))slot='right_sidebar';
+    const placeholder=getSlot(slot);if(!placeholder)return;
+    if(!placeholder.dataset.adRendered){placeholder.innerHTML='';placeholder.dataset.adRendered='true';}
+    const box=document.createElement('div');box.className='damyar-ad-area';
+    const img=document.createElement('img');img.src=ad.image_url||'';img.alt=ad.title||'تبلیغات دامیار';img.loading='lazy';
+    if(ad.link_url){const a=document.createElement('a');a.href=ad.link_url;a.target='_blank';a.rel='noopener noreferrer';a.appendChild(img);box.appendChild(a);}else box.appendChild(img);
+    if(ad.title){const caption=document.createElement('small');caption.textContent=ad.title;box.appendChild(caption);}
     placeholder.appendChild(box);
   });
 }
@@ -99,15 +82,15 @@ async function renderSiteGallery(){
   try{
     const {data,error}=await supabaseClient
       .from('site_media')
-      .select('id,type,title,url,image_url,link_url,created_at')
+      .select('id,type,title,image_url,link_url,created_at')
       .eq('type','gallery')
       .order('created_at',{ascending:false});
     if(error){console.error('Damyar gallery Supabase error:',error.message);return;}
-    const images=(data||[]).filter(item=>item.image_url||item.url);
+    const images=(data||[]).filter(item=>item.image_url);
     slots.forEach((slot,index)=>{
       const item=images[index];
       if(!item)return;
-      const src=item.image_url||item.url;
+      const src=item.image_url;
       slot.innerHTML='';
       slot.style.cssText='padding:10px;min-height:90px;display:flex;align-items:center;justify-content:center;flex-direction:column;box-sizing:border-box;';
       const img=document.createElement('img');
@@ -200,7 +183,7 @@ async function renderAboutSettings(){
   if(supportLink){supportLink.textContent=data.support_label||'ارتباط با پشتیبانی';if(data.support_url)supportLink.href=data.support_url;}
 }
 
-document.addEventListener('DOMContentLoaded',()=>{renderAboutSettings();renderSiteAds();renderSiteGallery();renderPosts('latestPosts');renderPosts('newsPosts',p=>String(p.kind||'').trim().toLowerCase()==='news'&&p.archived!==true);renderPosts('livestockPosts',p=>String(p.kind||'article').trim().toLowerCase()==='article'&&p.category==='livestock');renderPosts('poultryPosts',p=>String(p.kind||'article').trim().toLowerCase()==='article'&&p.category==='poultry');renderPosts('feedPosts',p=>String(p.kind||'article').trim().toLowerCase()==='article'&&p.category==='feed');renderPosts('articlePosts',p=>String(p.kind||'article').trim().toLowerCase()==='article'&&(p.category==='articles'||!p.category));renderDetail();loadVisitStats();});
+document.addEventListener('DOMContentLoaded',()=>{renderAboutSettings();renderSiteAds();renderSiteGallery();renderPosts('latestPosts');renderPosts('newsPosts',p=>String(p.kind||'').trim().toLowerCase()==='news'&&p.archived!==true);renderPosts('livestockPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='livestock');renderPosts('poultryPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='poultry');renderPosts('feedPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='feed');renderPosts('articlePosts',p=>String(p.kind||'article').trim().toLowerCase()==='article'&&(p.category==='articles'||!p.category));renderPosts('analysisPosts',p=>String(p.kind||'').trim().toLowerCase()==='analysis');renderDetail();loadVisitStats();});
 
 async function renderLibraryPage(){
   const box=document.getElementById('libraryFiles');if(!box||!supabaseClient)return;
