@@ -1,7 +1,12 @@
 async function fetchPosts(){if(!window.supabase||!supabaseClient)return {data:[],error:{message:'Supabase library not available'}};return await supabaseClient.from('posts').select('*').eq('published',true).order('created_at',{ascending:false});}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function postTypeLabel(kind){return ({news:'خبر',article:'مقاله',analysis:'تحلیل'})[String(kind||'article').toLowerCase()]||'مقاله';}
-function card(p,showImage=false){return `<article class="article-preview">${showImage&&p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.title)}" style="max-width:100%;height:auto;border-radius:8px;margin-bottom:12px">`:''}<span class="tag">${postTypeLabel(p.kind)}</span><h2>${esc(p.title)}</h2><p>${esc((p.content||'').slice(0,240))}${(p.content||'').length>240?'…':''}</p><small>${p.created_at?new Date(p.created_at).toLocaleDateString('fa-IR'):''}</small><br><a class="btn" href="post.html?id=${encodeURIComponent(p.id)}">ادامه مطلب</a></article>`;}
+function card(p,showImage=false){
+  const excerpt=String(p.content||'').trim();
+  const text=excerpt?(excerpt.slice(0,240)+(excerpt.length>240?'…':'')):'برای مشاهده جزئیات این مطلب، روی «ادامه مطلب» بزنید.';
+  const image=showImage&&p.image_url?`<img class="latest-post-image" src="${esc(p.image_url)}" alt="${esc(p.title||'تصویر مطلب')}" loading="lazy">`:'';
+  return `<article class="article-preview${showImage?' latest-post-card':''}">${image}<div class="post-card-content"><span class="tag">${postTypeLabel(p.kind)}</span><h2>${esc(p.title||'بدون عنوان')}</h2><p>${esc(text)}</p><small>${p.created_at?new Date(p.created_at).toLocaleDateString('fa-IR'):''}</small><br><a class="btn" href="post.html?id=${encodeURIComponent(p.id)}">ادامه مطلب</a></div></article>`;
+}
 const POSTS_PER_PAGE = 3;
 function getListingPage(){const value=Number.parseInt(new URLSearchParams(location.search).get('page')||'1',10);return Number.isFinite(value)&&value>0?value:1;}
 function renderPagination(total,page){const pages=Math.ceil(total/POSTS_PER_PAGE);if(pages<=1)return '';const makeLink=(n,label,disabled=false,current=false)=>disabled?`<span class="page-link disabled">${label}</span>`:`<a class="page-link${current?' current':''}" href="?page=${n}" ${current?'aria-current="page"':''}>${label}</a>`;let html='<nav class="posts-pagination" aria-label="صفحه‌بندی مطالب">';html+=makeLink(Math.max(1,page-1),'قبلی',page===1);const start=Math.max(1,page-2),end=Math.min(pages,page+2);for(let n=start;n<=end;n++)html+=makeLink(n,String(n),false,n===page);html+=makeLink(Math.min(pages,page+1),'بعدی',page===pages);html+='</nav>';return html;}
@@ -18,6 +23,7 @@ async function loadVisitStats(){
   if(total)total.textContent=Number(stats.total_views||0).toLocaleString('fa-IR');
   if(today)today.textContent=Number(stats.today_views||0).toLocaleString('fa-IR');
 }
+
 async function renderDetail(){const box=document.getElementById('postDetail');if(!box)return;const id=new URLSearchParams(location.search).get('id');if(!id){box.innerHTML='<p>شناسه مطلب مشخص نیست.</p>';return;}const {data,error}=await supabaseClient.from('posts').select('*').eq('id',id).eq('published',true).maybeSingle();if(error||!data){box.innerHTML='<p class="empty">مطلب پیدا نشد یا منتشر نشده است.</p>';return;}// ثبت بازدید فقط یک‌بار برای هر مطلب در هر نشست مرورگر
 const visitKey='damyar_view_'+String(data.id);
 if(!sessionStorage.getItem(visitKey)){
@@ -170,9 +176,15 @@ async function loadPublicComments(postId){
 async function renderAboutSettings(){
   const titleEl=document.getElementById('aboutTitle');
   if(!titleEl||!supabaseClient)return;
-  const {data,error}=await supabaseClient.from('about_settings').select('about_title,about_content,support_title,support_description,support_label,support_url').eq('id',1).maybeSingle();
+  const {data,error}=await supabaseClient.from('about_settings').select('about_title,about_content,about_image_url,support_title,support_description,support_label,support_url').eq('id',1).maybeSingle();
   if(error||!data)return;
   const content=document.getElementById('aboutContent');
+  let aboutImage=document.getElementById('aboutImage');
+  if(data.about_image_url){
+    if(!aboutImage){aboutImage=document.createElement('img');aboutImage.id='aboutImage';aboutImage.alt='تصویر دامیار';aboutImage.style.cssText='display:block;max-width:100%;max-height:420px;height:auto;object-fit:contain;border-radius:10px;margin:18px auto';content?.parentNode.insertBefore(aboutImage,content);}
+    aboutImage.src=data.about_image_url;
+    aboutImage.style.display='block';
+  }else if(aboutImage){aboutImage.remove();}
   const supportTitle=document.getElementById('supportTitle');
   const supportDescription=document.getElementById('supportDescription');
   const supportLink=document.getElementById('supportLink');
