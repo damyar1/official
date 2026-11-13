@@ -732,3 +732,101 @@ header.site-header img.ads-image {
   .article-preview h2 { font-size: 17px; }
 }
 
+/* Mobile visibility fix: show the complete navigation and prevent clipped sections */
+@media (max-width: 760px) {
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .nav {
+    overflow: visible;
+  }
+
+  .nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 2px;
+    width: 100%;
+    padding: 4px 6px;
+    overflow: visible;
+  }
+
+  .nav li {
+    flex: 1 1 auto;
+    min-width: max-content;
+    max-width: 100%;
+  }
+
+  .nav a {
+    min-height: 40px;
+    height: 100%;
+    padding: 7px 9px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.6;
+    font-size: 12px;
+  }
+
+  .layout {
+    width: calc(100% - 16px);
+    max-width: 600px;
+    overflow: visible;
+  }
+
+  .layout > *,
+  .content,
+  .sidebar,
+  .leftside,
+  .rightside {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .content,
+  .rightside,
+  .leftside,
+  .ad-slot.banner {
+    flex: 0 0 auto;
+  }
+
+  .content {
+    order: 1;
+  }
+
+  .rightside {
+    order: 2;
+  }
+
+  .leftside {
+    order: 3;
+  }
+
+  .ad-slot.banner {
+    order: 4;
+  }
+
+  .article-preview,
+  .latest-post-card,
+  .post-card,
+  .topic-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .article-preview img,
+  .latest-post-card img,
+  .post-card img,
+  .content img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
