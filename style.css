@@ -660,3 +660,75 @@ header.site-header img.ads-image {
 }
 .latest-post-card .post-card-content{display:block;width:100%;min-width:0}
 .latest-post-card h2,.latest-post-card p,.latest-post-card small{display:block;visibility:visible;opacity:1}
+
+/* ===== Mobile responsive refinement (desktop styles remain unchanged) ===== */
+@media (max-width: 760px) {
+  html, body { max-width: 100%; overflow-x: clip; }
+  .brand-center {
+    display: flex; width: 100%; min-width: 0; padding: 8px 12px;
+    align-items: center; justify-content: center; overflow: hidden;
+  }
+  .brand-mosque-logo {
+    display: block; width: min(100%, 520px); max-width: 100%;
+    height: auto; max-height: 155px; object-fit: contain; margin: 0 auto;
+  }
+  .nav { width: 100%; position: sticky; top: 0; overflow: hidden; }
+  .nav ul {
+    display: flex; flex-wrap: nowrap; justify-content: flex-start; gap: 0;
+    width: 100%; padding: 0 5px; overflow-x: auto; overflow-y: hidden;
+    overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nav ul::-webkit-scrollbar { display: none; }
+  .nav li { flex: 0 0 auto; text-align: center; }
+  .nav a {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 46px; padding: 9px 13px; white-space: nowrap; font-size: 13px;
+  }
+  .layout {
+    display: flex; flex-direction: column; align-items: stretch;
+    width: calc(100% - 20px); max-width: 600px;
+    margin: 12px auto; gap: 12px;
+  }
+  .layout > * { width: 100%; min-width: 0; max-width: 100%; }
+  .content { order: 1; padding: 14px; border-radius: 9px; }
+  .rightside { order: 2; }
+  .leftside { order: 3; }
+  .ad-slot.banner { order: 4; min-height: 72px; padding: 12px 8px; }
+  .section-title, .sidebar h3 { font-size: 16px; line-height: 1.7; }
+  .article-preview { overflow-wrap: anywhere; }
+  .article-preview h2 { font-size: 18px; line-height: 1.8; }
+  .article-preview p { font-size: 14px; line-height: 2; }
+  .latest-post-card, .topic-card, .interaction-panel {
+    min-width: 0; max-width: 100%; overflow-wrap: anywhere;
+  }
+  .latest-post-card .latest-post-image, .post-featured-image {
+    width: 100%; max-width: 100%; max-height: 260px;
+    height: auto; object-fit: contain;
+  }
+  .interaction-panel { padding: 14px; margin-top: 20px; }
+  .reaction-buttons { gap: 8px; }
+  .reaction-buttons button { flex: 1 1 auto; min-height: 42px; padding: 8px 12px; }
+  .search { width: 100%; }
+  .search input, .search button { min-height: 42px; font-size: 14px; }
+  .posts-pagination { gap: 6px; }
+  .posts-pagination .page-link { min-width: 36px; min-height: 40px; padding: 6px 10px; }
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gallery img { height: 110px; }
+  .damyar-ad-area { width: 100%; max-width: 100%; overflow: hidden; }
+  .damyar-ad-area img {
+    width: 100%; max-width: 100%; max-height: 190px; object-fit: contain;
+  }
+  .footer { padding: 18px 12px; font-size: 13px; line-height: 2; }
+  img, video, iframe, table { max-width: 100%; }
+  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+@media (max-width: 380px) {
+  .brand-center { padding: 6px 8px; }
+  .brand-mosque-logo { max-height: 125px; }
+  .nav a { padding: 8px 10px; font-size: 12px; }
+  .layout { width: calc(100% - 14px); gap: 9px; }
+  .content, .sidebar { padding: 11px; }
+  .article-preview h2 { font-size: 17px; }
+}
+
