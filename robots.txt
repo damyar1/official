@@ -1,3 +1,5 @@
 User-agent: *
 Allow: /
-Sitemap: https://damyar1.github.io/damyar/sitemap.xml
+Disallow: /admin.html
+
+Sitemap: https://damyar1.github.io/official/sitemap.xml
