@@ -198,6 +198,25 @@
             <p id="mediaMsg"></p>
             <h3>تصاویر ذخیره‌شده</h3>
             <div id="adminMedia"></div>
+            <hr style="margin:24px 0;border:0;border-top:1px solid #ddd">
+            <section id="poultryFarmsAdmin">
+                <h2>مدیریت لیست مرغداری‌ها</h2>
+                <p>اطلاعات مرغداری‌ها در ستون سمت چپ سایت نمایش داده می‌شود.</p>
+                <form id="poultryFarmForm">
+                    <input type="hidden" id="farmId">
+                    <label for="farmName">نام مرغداری</label><input id="farmName" maxlength="140" required placeholder="نام مرغداری">
+                    <label for="farmCity">شهر یا منطقه</label><input id="farmCity" maxlength="120" placeholder="مثلاً مهر یا لامرد">
+                    <label for="farmPhone">شماره تماس</label><input id="farmPhone" type="tel" maxlength="40" placeholder="شماره تماس">
+                    <label for="farmAddress">نشانی</label><input id="farmAddress" maxlength="240" placeholder="نشانی یا محدوده فعالیت">
+                    <label for="farmDescription">توضیحات</label><textarea id="farmDescription" rows="3" maxlength="500" placeholder="اطلاعات تکمیلی (اختیاری)"></textarea>
+                    <label for="farmWebsite">وب‌سایت یا صفحه معرفی</label><input id="farmWebsite" type="url" placeholder="https://...">
+                    <button type="submit" id="farmSubmit">افزودن مرغداری</button>
+                    <button type="button" id="farmCancel" style="display:none;background:#777">لغو ویرایش</button>
+                </form>
+                <p id="farmMsg" role="status"></p>
+                <h3>مرغداری‌های ثبت‌شده</h3>
+                <div id="adminPoultryFarms">در حال دریافت...</div>
+            </section>
             </section>
             <section class="admin-tab-panel" id="admin-comments-section" role="tabpanel" hidden>
             <section id="commentsAdmin" class="admin-subsection">
@@ -256,7 +275,7 @@
         let currentUser = null; const $ = id => document.getElementById(id);
         document.querySelectorAll('[data-admin-tab]').forEach(btn=>btn.addEventListener('click',()=>{const target=btn.getAttribute('data-admin-tab');document.querySelectorAll('[data-admin-tab]').forEach(b=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-selected',active?'true':'false');});document.querySelectorAll('.admin-tab-panel').forEach(panel=>{const active=panel.id===target;panel.hidden=!active;panel.classList.toggle('active',active);});if(target==='admin-library-section')loadLibraryFiles();if(target==='admin-comments-section')loadAdminComments('pending');if(target==='admin-archive-section')renderArchivedPosts();}));
         async function sessionCheck() { const { data } = await supabaseClient.auth.getSession(); currentUser = data.session?.user || null; showPanel(); }
-        function showPanel() { $('login').style.display = currentUser ? 'none' : 'block'; $('dashboard').style.display = currentUser ? 'block' : 'none'; if (currentUser) { loadAdminPosts(); loadMedia(); loadAdminComments('pending'); loadLibraryFiles(); loadAboutSettings(); } };
+        function showPanel() { $('login').style.display = currentUser ? 'none' : 'block'; $('dashboard').style.display = currentUser ? 'block' : 'none'; if (currentUser) { loadAdminPosts(); loadMedia(); loadPoultryFarmsAdmin(); loadAdminComments('pending'); loadLibraryFiles(); loadAboutSettings(); } };
         function resetForm() { $('postForm').reset(); $('postId').value = ''; syncCategory(); }
         function syncCategory() { const isNews = $('kind').value === 'news'; $('categoryWrap').style.display = isNews ? 'none' : 'block'; if (isNews) $('category').value = 'news'; else if ($('category').value === 'news') $('category').value = 'articles'; }
         $('kind').addEventListener('change', ()=>{syncCategory();$('archived').closest('label')?.style.setProperty('display',$('kind').value==='news'?'block':'none');$('archived').style.display=$('kind').value==='news'?'block':'none';}); syncCategory();$('archived').style.display=$('kind').value==='news'?'block':'none';
@@ -308,6 +327,19 @@
             $('mediaForm').reset(); $('mediaType').dispatchEvent(new Event('change')); loadMedia();
         };
         window.deleteMedia = async id => { if (!confirm('این تصویر حذف شود؟')) return; const { error } = await supabaseClient.from('site_media').delete().eq('id', id); if (error) alert(error.message); else loadMedia(); };
+        async function loadPoultryFarmsAdmin(){
+            const box=$('adminPoultryFarms');if(!box)return;
+            const {data,error}=await supabaseClient.from('poultry_farms').select('*').order('created_at',{ascending:false});
+            if(error){box.textContent='خطا: '+error.message+' — ابتدا فایل poultry-farms-setup.sql را در Supabase اجرا کنید.';return;}
+            window.adminPoultryFarms=data||[];
+            box.innerHTML=window.adminPoultryFarms.map(f=>'<div class="rowpost"><div style="flex:1"><b>'+safe(f.name)+'</b><small> — '+safe(f.city||'بدون منطقه')+' — '+safe(f.phone||'بدون شماره تماس')+' — '+(f.is_active?'فعال':'غیرفعال')+'</small><p>'+safe(f.address||'')+' '+safe(f.description||'')+'</p></div><div><button type="button" onclick="editPoultryFarm('+f.id+')">ویرایش</button><button type="button" style="background:#c33" onclick="deletePoultryFarm('+f.id+')">حذف</button></div></div>').join('')||'<p class="empty">هنوز مرغداری‌ای ثبت نشده است.</p>';
+        }
+        function resetPoultryFarmForm(){ $('poultryFarmForm').reset();$('farmId').value='';$('farmSubmit').textContent='افزودن مرغداری';$('farmCancel').style.display='none'; }
+        window.editPoultryFarm=id=>{const f=(window.adminPoultryFarms||[]).find(x=>String(x.id)===String(id));if(!f)return;$('farmId').value=f.id;$('farmName').value=f.name||'';$('farmCity').value=f.city||'';$('farmPhone').value=f.phone||'';$('farmAddress').value=f.address||'';$('farmDescription').value=f.description||'';$('farmWebsite').value=f.website_url||'';$('farmSubmit').textContent='ذخیره تغییرات';$('farmCancel').style.display='inline-block';$('poultryFarmsAdmin').scrollIntoView({behavior:'smooth'});};
+        window.deletePoultryFarm=async id=>{if(!confirm('این مرغداری از فهرست حذف شود؟'))return;const {error}=await supabaseClient.from('poultry_farms').delete().eq('id',id);if(error)alert('حذف انجام نشد: '+error.message);else loadPoultryFarmsAdmin();};
+        $('farmCancel').onclick=resetPoultryFarmForm;
+        $('poultryFarmForm').onsubmit=async e=>{e.preventDefault();const id=$('farmId').value;const website=$('farmWebsite').value.trim();if(website&&!/^https?:\\/\\//i.test(website)){$('farmMsg').textContent='آدرس وب‌سایت باید با https:// یا http:// شروع شود.';return;}const payload={name:$('farmName').value.trim(),city:$('farmCity').value.trim()||null,phone:$('farmPhone').value.trim()||null,address:$('farmAddress').value.trim()||null,description:$('farmDescription').value.trim()||null,website_url:website||null,is_active:true};const result=id?await supabaseClient.from('poultry_farms').update(payload).eq('id',id):await supabaseClient.from('poultry_farms').insert(payload);if(result.error){$('farmMsg').textContent='ذخیره انجام نشد: '+result.error.message;return;}$('farmMsg').textContent=id?'اطلاعات مرغداری ویرایش شد.':'مرغداری به فهرست اضافه شد.';resetPoultryFarmForm();loadPoultryFarmsAdmin();};
+
         let libraryReplaceId = null;
         async function loadAdminComments(filter='pending') {
             const box=$('adminComments');box.textContent='در حال دریافت...';
