@@ -100,6 +100,7 @@
                 <button type="button" class="admin-tab" data-admin-tab="admin-archive-section" role="tab" aria-selected="false">آرشیو خبرها</button>
                 <button type="button" class="admin-tab" data-admin-tab="admin-library-section" role="tab" aria-selected="false">کتابخانه علوم دامی</button>
                 <button type="button" class="admin-tab" data-admin-tab="admin-media-section" role="tab" aria-selected="false">تصاویر و تبلیغات</button>
+                <button type="button" class="admin-tab" data-admin-tab="admin-farms-section" role="tab" aria-selected="false">مدیریت مرغداری‌ها</button>
                 <button type="button" class="admin-tab" data-admin-tab="admin-about-section" role="tab" aria-selected="false">دربارهٔ ما</button>
             </nav>
             <section class="admin-tab-panel active" id="admin-posts-section" role="tabpanel">
@@ -198,7 +199,8 @@
             <p id="mediaMsg"></p>
             <h3>تصاویر ذخیره‌شده</h3>
             <div id="adminMedia"></div>
-            <hr style="margin:24px 0;border:0;border-top:1px solid #ddd">
+            </section>
+            <section class="admin-tab-panel" id="admin-farms-section" role="tabpanel" hidden>
             <section id="poultryFarmsAdmin">
                 <h2>مدیریت لیست مرغداری‌ها</h2>
                 <p>اطلاعات مرغداری‌ها در ستون سمت چپ سایت نمایش داده می‌شود.</p>
@@ -216,7 +218,6 @@
                 <p id="farmMsg" role="status"></p>
                 <h3>مرغداری‌های ثبت‌شده</h3>
                 <div id="adminPoultryFarms">در حال دریافت...</div>
-            </section>
             </section>
             <section class="admin-tab-panel" id="admin-comments-section" role="tabpanel" hidden>
             <section id="commentsAdmin" class="admin-subsection">
@@ -273,7 +274,7 @@
     <script src="site.js"></script>
     <script>
         let currentUser = null; const $ = id => document.getElementById(id);
-        document.querySelectorAll('[data-admin-tab]').forEach(btn=>btn.addEventListener('click',()=>{const target=btn.getAttribute('data-admin-tab');document.querySelectorAll('[data-admin-tab]').forEach(b=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-selected',active?'true':'false');});document.querySelectorAll('.admin-tab-panel').forEach(panel=>{const active=panel.id===target;panel.hidden=!active;panel.classList.toggle('active',active);});if(target==='admin-library-section')loadLibraryFiles();if(target==='admin-comments-section')loadAdminComments('pending');if(target==='admin-archive-section')renderArchivedPosts();}));
+        document.querySelectorAll('[data-admin-tab]').forEach(btn=>btn.addEventListener('click',()=>{const target=btn.getAttribute('data-admin-tab');document.querySelectorAll('[data-admin-tab]').forEach(b=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-selected',active?'true':'false');});document.querySelectorAll('.admin-tab-panel').forEach(panel=>{const active=panel.id===target;panel.hidden=!active;panel.classList.toggle('active',active);});if(target==='admin-library-section')loadLibraryFiles();if(target==='admin-farms-section')loadPoultryFarmsAdmin();if(target==='admin-comments-section')loadAdminComments('pending');if(target==='admin-archive-section')renderArchivedPosts();}));
         async function sessionCheck() { const { data } = await supabaseClient.auth.getSession(); currentUser = data.session?.user || null; showPanel(); }
         function showPanel() { $('login').style.display = currentUser ? 'none' : 'block'; $('dashboard').style.display = currentUser ? 'block' : 'none'; if (currentUser) { loadAdminPosts(); loadMedia(); loadPoultryFarmsAdmin(); loadAdminComments('pending'); loadLibraryFiles(); loadAboutSettings(); } };
         function resetForm() { $('postForm').reset(); $('postId').value = ''; syncCategory(); }
