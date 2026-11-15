@@ -81,7 +81,7 @@ async function renderSiteAds(){
   });
 }
 async function renderSiteGallery(){
-  const gallery=document.getElementById('homeGallery');
+  const gallery=document.getElementById('siteGallery') || document.getElementById('homeGallery');
   if(!gallery)return;
   if(!supabaseClient)return;
   const slots=Array.from(gallery.querySelectorAll('.ad-slot'));
@@ -119,6 +119,20 @@ async function renderSiteGallery(){
   }catch(err){console.error('Damyar gallery failed:',err);}
 }
 
+
+
+async function renderPoultryFarms(){
+  const box=document.getElementById('poultryFarms');
+  if(!box||!supabaseClient)return;
+  const {data,error}=await supabaseClient.from('poultry_farms').select('id,name,city,phone,address,description,website_url').eq('is_active',true).order('name',{ascending:true});
+  if(error){box.innerHTML='<p class="empty">فهرست مرغداری‌ها در دسترس نیست.</p>';console.error('Poultry farms load failed:',error.message);return;}
+  if(!data?.length){box.innerHTML='<p class="empty">هنوز مرغداری‌ای ثبت نشده است.</p>';return;}
+  box.innerHTML=data.map(f=>{
+    const contact=f.phone?'<a class="farm-contact" href="tel:'+esc(f.phone)+'">تماس</a>':'';
+    const site=f.website_url?'<a class="farm-contact" href="'+esc(f.website_url)+'" target="_blank" rel="noopener">وب‌سایت</a>':'';
+    return '<article class="farm-item"><strong>'+esc(f.name)+'</strong>'+(f.city?'<small>'+esc(f.city)+'</small>':'')+(f.address?'<p>'+esc(f.address)+'</p>':'')+(f.description?'<p>'+esc(f.description)+'</p>':'')+((contact||site)?'<div class="farm-actions">'+contact+site+'</div>':'')+'</article>';
+  }).join('');
+}
 
 // شناسه پایدار مرورگر برای جلوگیری از ثبت چند واکنش برای یک بازدیدکننده
 function getDamyarVisitorId(){
@@ -195,7 +209,7 @@ async function renderAboutSettings(){
   if(supportLink){supportLink.textContent=data.support_label||'ارتباط با پشتیبانی';if(data.support_url)supportLink.href=data.support_url;}
 }
 
-document.addEventListener('DOMContentLoaded',()=>{renderAboutSettings();renderSiteAds();renderSiteGallery();renderPosts('latestPosts');renderPosts('newsPosts',p=>String(p.kind||'').trim().toLowerCase()==='news'&&p.archived!==true);renderPosts('livestockPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='livestock');renderPosts('poultryPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='poultry');renderPosts('feedPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='feed');renderPosts('articlePosts',p=>String(p.kind||'article').trim().toLowerCase()==='article'&&(p.category==='articles'||!p.category));renderPosts('analysisPosts',p=>String(p.kind||'').trim().toLowerCase()==='analysis');renderDetail();loadVisitStats();});
+document.addEventListener('DOMContentLoaded',()=>{renderAboutSettings();renderSiteAds();renderSiteGallery();renderPoultryFarms();renderPosts('latestPosts');renderPosts('newsPosts',p=>String(p.kind||'').trim().toLowerCase()==='news'&&p.archived!==true);renderPosts('livestockPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='livestock');renderPosts('poultryPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='poultry');renderPosts('feedPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='feed');renderPosts('articlePosts',p=>String(p.kind||'article').trim().toLowerCase()==='article'&&(p.category==='articles'||!p.category));renderPosts('analysisPosts',p=>String(p.kind||'').trim().toLowerCase()==='analysis');renderDetail();loadVisitStats();});
 
 async function renderLibraryPage(){
   const box=document.getElementById('libraryFiles');if(!box||!supabaseClient)return;
