@@ -862,3 +862,21 @@ header.site-header img.ads-image {
   }
 }
 
+
+
+/* Poultry farm directory and right-side gallery */
+.farm-list{display:flex;flex-direction:column;gap:9px;min-width:0}
+.farm-item{padding:10px;border:1px solid #e0eadf;border-radius:8px;background:#fbfdfb;overflow-wrap:anywhere}
+.farm-item strong{display:block;color:#286d31;font-size:14px;line-height:1.8}
+.farm-item small{display:block;color:#777;font-size:12px}
+.farm-item p{margin-top:5px;color:#555;font-size:12px;line-height:1.8}
+.farm-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.farm-contact{display:inline-block;padding:4px 10px;border-radius:5px;background:#2e7d32;color:#fff;font-size:12px}
+.rightside #siteGallery{display:grid;grid-template-columns:1fr;gap:8px}
+.rightside #siteGallery .ad-slot{margin:0;min-height:72px;padding:8px}
+.rightside #siteGallery img{display:block;width:100%;height:auto;max-height:150px;object-fit:contain;border-radius:6px}
+@media(max-width:760px){
+ .farm-list{display:grid;grid-template-columns:1fr;gap:8px}
+ .rightside #siteGallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .farm-item{padding:11px}
+}
