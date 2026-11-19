@@ -209,7 +209,7 @@ async function renderAboutSettings(){
   if(supportLink){supportLink.textContent=data.support_label||'ارتباط با پشتیبانی';if(data.support_url)supportLink.href=data.support_url;}
 }
 
-document.addEventListener('DOMContentLoaded',()=>{renderAboutSettings();renderSiteAds();renderSiteGallery();renderPoultryFarms();renderPosts('latestPosts');renderPosts('newsPosts',p=>String(p.kind||'').trim().toLowerCase()==='news'&&p.archived!==true);renderPosts('livestockPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='livestock');renderPosts('poultryPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='poultry');renderPosts('feedPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='feed');renderPosts('articlePosts',p=>String(p.kind||'article').trim().toLowerCase()==='article'&&(p.category==='articles'||!p.category));renderPosts('analysisPosts',p=>String(p.kind||'').trim().toLowerCase()==='analysis');renderDetail();loadVisitStats();});
+document.addEventListener('DOMContentLoaded',()=>{renderAboutSettings();renderAboutImages();renderSiteAds();renderSiteGallery();renderPoultryFarms();renderPosts('latestPosts');renderPosts('newsPosts',p=>String(p.kind||'').trim().toLowerCase()==='news'&&p.archived!==true);renderPosts('livestockPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='livestock');renderPosts('poultryPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='poultry');renderPosts('feedPosts',p=>['article','analysis'].includes(String(p.kind||'article').trim().toLowerCase())&&p.category==='feed');renderPosts('articlePosts',p=>String(p.kind||'article').trim().toLowerCase()==='article'&&(p.category==='articles'||!p.category));renderPosts('analysisPosts',p=>String(p.kind||'').trim().toLowerCase()==='analysis');renderDetail();loadVisitStats();});
 
 async function renderLibraryPage(){
   const box=document.getElementById('libraryFiles');if(!box||!supabaseClient)return;
@@ -218,3 +218,13 @@ async function renderLibraryPage(){
   box.innerHTML=(data||[]).map(f=>`<article class="library-card"><h2>${esc(f.title)}</h2><p>${esc(f.description||'')}</p><div class="library-meta">${esc(f.file_name)}${f.created_at?' — '+new Date(f.created_at).toLocaleDateString('fa-IR'):''}</div><p><a class="library-download" href="${esc(f.public_url)}" target="_blank" rel="noopener" download>دانلود فایل</a></p></article>`).join('')||'<p class="empty">هنوز فایلی در کتابخانه منتشر نشده است.</p>';
 }
 document.addEventListener('DOMContentLoaded',renderLibraryPage);
+
+
+async function renderAboutImages(){
+  const box=document.getElementById('aboutImages');
+  if(!box||!supabaseClient)return;
+  const {data,error}=await supabaseClient.from('about_images').select('id,image_url,title,display_order').order('display_order',{ascending:true}).order('id',{ascending:true});
+  if(error){console.error('About images could not be loaded:',error.message);return;}
+  if(!data?.length)return;
+  box.innerHTML=data.filter(x=>x.image_url).map(item=>`<figure class="about-public-image"><img src="${esc(item.image_url)}" alt="${esc(item.title||'تصویر دامیار')}" loading="lazy">${item.title?`<figcaption>${esc(item.title)}</figcaption>`:''}</figure>`).join('');
+}

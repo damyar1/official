@@ -880,3 +880,9 @@ header.site-header img.ads-image {
  .rightside #siteGallery{grid-template-columns:repeat(2,minmax(0,1fr))}
  .farm-item{padding:11px}
 }
+
+.about-images-public{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:22px 0}
+.about-public-image{margin:0;min-width:0}
+.about-public-image img{display:block;width:100%;max-height:300px;object-fit:cover;border-radius:10px}
+.about-public-image figcaption{font-size:13px;color:#666;margin-top:6px;text-align:center}
+@media(max-width:600px){.about-images-public{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.about-public-image img{max-height:210px}}

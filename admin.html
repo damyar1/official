@@ -63,6 +63,14 @@
     <meta property="og:description"
         content="دامیار مهر و لامرد؛ اخبار، مقالات، اطلاعات و مطالب مرتبط با دامداری، دام و طیور و خوراک دام در شهرستان‌های مهر و لامرد.">
     <meta property="og:type" content="website">
+<style>
+        .about-images-admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:14px 0}
+        .about-image-admin-card{border:1px solid #dce8dc;border-radius:10px;padding:9px;background:#fff;min-width:0}
+        .about-image-admin-card img{width:100%;height:115px;object-fit:cover;border-radius:7px;display:block}
+        .about-image-admin-card .about-image-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+        .about-image-admin-card button{padding:6px 9px;font-size:12px}
+        .about-image-admin-card .delete-about-image{background:#c33}
+    </style>
 </head>
 
 <body>
@@ -250,12 +258,12 @@
                 <input id="aboutAdminTitle" maxlength="120" value="دربارهٔ دامیار">
                 <label for="aboutAdminContent">متن معرفی دامیار</label>
                 <textarea id="aboutAdminContent" rows="7" placeholder="درباره دامیار بنویسید..."></textarea>
-                <label for="aboutAdminImage">تصویر صفحه دربارهٔ ما</label>
-                <input id="aboutAdminImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
-                <small>فرمت‌های مجاز: JPG، PNG، WEBP و GIF؛ حداکثر حجم ۵ مگابایت</small>
-                <img id="aboutAdminImagePreview" alt="پیش‌نمایش تصویر درباره ما" style="display:none;max-width:100%;max-height:240px;object-fit:contain;border-radius:10px;margin:12px 0">
-                <button type="button" id="removeAboutImage" class="secondary">حذف تصویر فعلی</button>
-                <input type="hidden" id="aboutAdminImageUrl">
+                <label for="aboutAdminImages">تصاویر صفحه دربارهٔ ما</label>
+                <input id="aboutAdminImages" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple>
+                <small>می‌توانید چند تصویر را هم‌زمان انتخاب کنید؛ فرمت JPG، PNG، WEBP یا GIF و حداکثر ۵ مگابایت برای هر تصویر.</small>
+                <p id="aboutImagesMsg" role="status"></p>
+                <div id="aboutImagesPreview" class="about-images-admin-grid"></div>
+                <small>تصاویر پس از انتخاب و آپلود در همین بخش ذخیره می‌شوند. با دکمه‌های بالا و پایین ترتیب نمایش را تغییر دهید.</small>
                 <label for="supportAdminTitle">عنوان بخش پشتیبانی</label>
                 <input id="supportAdminTitle" maxlength="120" value="ارتباط با پشتیبانی">
                 <label for="supportAdminDescription">توضیح بخش پشتیبانی</label>
@@ -366,36 +374,103 @@
             const msg = $('aboutSettingsMsg');
             const { data, error } = await supabaseClient.from('about_settings').select('*').eq('id', 1).maybeSingle();
             if (error) { msg.textContent = 'برای فعال شدن این بخش، ابتدا فایل SQL تنظیمات درباره ما را در Supabase اجرا کن. جزئیات: ' + error.message; return; }
-            if (!data) return;
+            if (!data) { await loadAboutImages(); return; }
             $('aboutAdminTitle').value = data.about_title || 'دربارهٔ دامیار';
             $('aboutAdminContent').value = data.about_content || '';
             $('supportAdminTitle').value = data.support_title || 'ارتباط با پشتیبانی';
             $('supportAdminDescription').value = data.support_description || '';
             $('supportAdminLabel').value = data.support_label || 'ارتباط با پشتیبانی';
             $('supportAdminUrl').value = data.support_url || '';
-            $('aboutAdminImageUrl').value = data.about_image_url || '';
-            setAboutImagePreview(data.about_image_url || '');
+            await loadAboutImages();
         }
 
-        function setAboutImagePreview(url) {
-            const preview = $('aboutAdminImagePreview');
-            if (!preview) return;
-            if (url) { preview.src = url; preview.style.display = 'block'; }
-            else { preview.removeAttribute('src'); preview.style.display = 'none'; }
-        }
-        $('aboutAdminImage').onchange = () => {
-            const file = $('aboutAdminImage').files[0];
-            if (!file) return;
-            if (!['image/jpeg','image/png','image/webp','image/gif'].includes(file.type) || file.size > 5*1024*1024) {
-                $('aboutSettingsMsg').textContent = 'تصویر باید JPG، PNG، WEBP یا GIF و حداکثر ۵ مگابایت باشد.';
-                $('aboutAdminImage').value = ''; return;
+        let aboutImagesCache = [];
+        async function loadAboutImages() {
+            const box = $('aboutImagesPreview');
+            if (!box) return;
+            const { data, error } = await supabaseClient.from('about_images').select('*').order('display_order', { ascending: true }).order('id', { ascending: true });
+            if (error) {
+                box.innerHTML = '<p class="empty">برای فعال شدن چندتصویری، فایل setup-about-images.sql را در Supabase اجرا کنید. جزئیات: ' + safe(error.message) + '</p>';
+                return;
             }
-            setAboutImagePreview(URL.createObjectURL(file));
+            aboutImagesCache = data || [];
+            renderAboutImagesAdmin();
+        }
+        function renderAboutImagesAdmin() {
+            const box = $('aboutImagesPreview');
+            if (!box) return;
+            box.innerHTML = aboutImagesCache.map((item, index) => `
+                <div class="about-image-admin-card">
+                    <img src="${safe(item.image_url)}" alt="${safe(item.title || 'تصویر درباره ما')}">
+                    <small>${safe(item.title || 'تصویر ' + (index + 1))}</small>
+                    <div class="about-image-actions">
+                        <button type="button" class="secondary" onclick="moveAboutImage(${item.id},-1)" ${index===0?'disabled':''}>بالا</button>
+                        <button type="button" class="secondary" onclick="moveAboutImage(${item.id},1)" ${index===aboutImagesCache.length-1?'disabled':''}>پایین</button>
+                        <button type="button" class="delete-about-image" onclick="deleteAboutImage(${item.id})">حذف</button>
+                    </div>
+                </div>`).join('') || '<p class="empty">هنوز تصویری برای درباره ما ثبت نشده است.</p>';
+        }
+        $('aboutAdminImages').onchange = async () => {
+            const input = $('aboutAdminImages');
+            const files = Array.from(input.files || []);
+            if (!files.length) return;
+            const msg = $('aboutImagesMsg');
+            const allowed = ['image/jpeg','image/png','image/webp','image/gif'];
+            for (const file of files) {
+                if (!allowed.includes(file.type) || file.size > 5*1024*1024) {
+                    msg.textContent = 'هر تصویر باید JPG، PNG، WEBP یا GIF و حداکثر ۵ مگابایت باشد.';
+                    input.value = ''; return;
+                }
+            }
+            input.disabled = true;
+            let added = 0;
+            for (const file of files) {
+                msg.textContent = `در حال آپلود ${added+1} از ${files.length}: ${file.name}`;
+                const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'') || 'jpg';
+                const imagePath = 'about/gallery-' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
+                const { error: uploadError } = await supabaseClient.storage.from('damyar-media').upload(imagePath, file, { upsert:false, contentType:file.type });
+                if (uploadError) { msg.textContent = 'خطا در آپلود ' + file.name + ': ' + uploadError.message; continue; }
+                const imageUrl = supabaseClient.storage.from('damyar-media').getPublicUrl(imagePath).data.publicUrl;
+                const nextOrder = aboutImagesCache.length ? Math.max(...aboutImagesCache.map(x=>Number(x.display_order)||0))+1 : 0;
+                const { error: insertError } = await supabaseClient.from('about_images').insert({ image_url:imageUrl, title:file.name, display_order:nextOrder });
+                if (insertError) {
+                    await supabaseClient.storage.from('damyar-media').remove([imagePath]);
+                    msg.textContent = 'تصویر آپلود شد اما ذخیره اطلاعات آن ناموفق بود: ' + insertError.message;
+                    continue;
+                }
+                added++;
+                await loadAboutImages();
+            }
+            input.disabled = false;
+            input.value = '';
+            if (added) msg.textContent = `${added} تصویر با موفقیت به درباره ما اضافه شد.`;
         };
-        $('removeAboutImage').onclick = () => {
-            $('aboutAdminImage').value = '';
-            $('aboutAdminImageUrl').value = '';
-            setAboutImagePreview('');
+        window.moveAboutImage = async (id, direction) => {
+            const index = aboutImagesCache.findIndex(x=>String(x.id)===String(id));
+            const otherIndex = index + direction;
+            if (index < 0 || otherIndex < 0 || otherIndex >= aboutImagesCache.length) return;
+            const current = aboutImagesCache[index], other = aboutImagesCache[otherIndex];
+            const first = await supabaseClient.from('about_images').update({display_order:Number(other.display_order)||0}).eq('id',current.id);
+            if (first.error) { $('aboutImagesMsg').textContent='خطا در تغییر ترتیب: '+first.error.message; return; }
+            const second = await supabaseClient.from('about_images').update({display_order:Number(current.display_order)||0}).eq('id',other.id);
+            if (second.error) { $('aboutImagesMsg').textContent='خطا در تغییر ترتیب: '+second.error.message; return; }
+            await loadAboutImages();
+        };
+        window.deleteAboutImage = async id => {
+            if (!confirm('این تصویر از صفحه درباره ما حذف شود؟')) return;
+            const item = aboutImagesCache.find(x=>String(x.id)===String(id));
+            const { error } = await supabaseClient.from('about_images').delete().eq('id',id);
+            if (error) { $('aboutImagesMsg').textContent='خطا در حذف تصویر: '+error.message; return; }
+            if (item?.image_url) {
+                const marker = '/storage/v1/object/public/damyar-media/';
+                const at = item.image_url.indexOf(marker);
+                if (at >= 0) {
+                    const path = decodeURIComponent(item.image_url.slice(at+marker.length).split('?')[0]);
+                    await supabaseClient.storage.from('damyar-media').remove([path]);
+                }
+            }
+            $('aboutImagesMsg').textContent='تصویر حذف شد.';
+            await loadAboutImages();
         };
 
         $('aboutSettingsForm').onsubmit = async e => {
@@ -403,19 +478,9 @@
             const msg = $('aboutSettingsMsg');
             const url = $('supportAdminUrl').value.trim();
             if (!/^https?:\/\//i.test(url)) { msg.textContent = 'لینک پشتیبانی باید با https:// یا http:// شروع شود.'; return; }
-            let aboutImageUrl = $('aboutAdminImageUrl').value.trim();
-            const imageFile = $('aboutAdminImage').files[0];
-            if (imageFile) {
-                msg.textContent = 'در حال آپلود تصویر...';
-                const ext = imageFile.name.split('.').pop().toLowerCase();
-                const imagePath = 'about/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
-                const { error: uploadError } = await supabaseClient.storage.from('damyar-media').upload(imagePath, imageFile, { upsert: false, contentType: imageFile.type });
-                if (uploadError) { msg.textContent = 'خطا در آپلود تصویر: ' + uploadError.message; return; }
-                aboutImageUrl = supabaseClient.storage.from('damyar-media').getPublicUrl(imagePath).data.publicUrl;
-            }
-            const payload = { id: 1, about_title: $('aboutAdminTitle').value.trim(), about_content: $('aboutAdminContent').value.trim(), about_image_url: aboutImageUrl || null, support_title: $('supportAdminTitle').value.trim(), support_description: $('supportAdminDescription').value.trim(), support_label: $('supportAdminLabel').value.trim(), support_url: url, updated_at: new Date().toISOString() };
+            const payload = { id: 1, about_title: $('aboutAdminTitle').value.trim(), about_content: $('aboutAdminContent').value.trim(), support_title: $('supportAdminTitle').value.trim(), support_description: $('supportAdminDescription').value.trim(), support_label: $('supportAdminLabel').value.trim(), support_url: url, updated_at: new Date().toISOString() };
             const { error } = await supabaseClient.from('about_settings').upsert(payload, { onConflict: 'id' });
-            msg.textContent = error ? 'خطا در ذخیره: ' + error.message : 'تنظیمات صفحه دربارهٔ ما ذخیره شد.';
+            msg.textContent = error ? 'خطا در ذخیره: ' + error.message : 'تنظیمات متن و پشتیبانی دربارهٔ ما ذخیره شد.';
         };
         $('cancelEdit').onclick = resetForm; supabaseClient.auth.onAuthStateChange((_event, session) => { currentUser = session?.user || null; showPanel(); }); sessionCheck();
     </script>
